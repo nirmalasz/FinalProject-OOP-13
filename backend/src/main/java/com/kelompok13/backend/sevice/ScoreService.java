@@ -79,6 +79,12 @@ public class ScoreService {
         }
     }
 
+    public String getStageByPlayerId(UUID playerId){
+        String  stage = scoreRepository.getStageByPlayerId(playerId);
+        if(stage==null) return "-";
+        else return stage;
+    }
+
     public Score updateScore(UUID scoreId, Score updatedScore){
         Score existingScore = scoreRepository.findById(scoreId)
                 .orElseThrow(() -> new RuntimeException("Score not found with ID: " +scoreId));

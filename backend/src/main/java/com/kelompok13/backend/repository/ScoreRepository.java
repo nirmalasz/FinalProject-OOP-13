@@ -24,5 +24,6 @@ public interface ScoreRepository extends JpaRepository<Score, UUID>  {
 
     @Query("SELECT SUM(s.coinsCollected) FROM Score s WHERE s.playerId =:playerId ")
     Integer getTotalCoinsByPlayerId(@Param("playerId") UUID playerId);
+    String getStageByPlayerId(@Param("playerId") UUID playerId);
 
 }
