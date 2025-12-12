@@ -130,5 +130,5 @@ public class ScoreController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("{\"error\": \"" + e.getMessage() + "\"}");
         }
-    }
+    } 
 }
