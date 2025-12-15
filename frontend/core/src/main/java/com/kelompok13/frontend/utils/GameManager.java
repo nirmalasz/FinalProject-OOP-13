@@ -47,6 +47,6 @@ public class GameManager {
     //buat currency
 
     //buat observer
-        
+
 
 }
