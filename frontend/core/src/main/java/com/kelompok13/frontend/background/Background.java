@@ -20,12 +20,12 @@ public class Background {
     protected float parallaxX = 1f; //moves with camera by default
     protected float parallaxY = 1f;
 
-    // Direct-loading constructor (from file path)
+    // constructor lgsg
     public Background(String path, ResizeMode mode, boolean tileX, boolean tileY) {
         this(new Texture(Gdx.files.internal(path)), mode, tileX, tileY, true);
     }
 
-    // Texture-based constructor (for AssetManager - set ownsTexture=false if texture from AssetManager)
+    // constructor using asset manager
     public Background(Texture texture, ResizeMode mode, boolean tileX, boolean tileY, boolean ownsTexture) {
         this.backgroundTexture = texture;
         this.mode = mode;
@@ -35,7 +35,9 @@ public class Background {
         if (tileX || tileY) {
             backgroundTexture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
         }
-        // choose filtering: nearest for pixel-art, Linear for smooth. adjust as needed:
+        // filter nanti lihat dl gambarnya pixel art apa ga
+        // kalau backgroundnya pixel pakai nearest
+        // kalau smooth pakai linear
         backgroundTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         this.backgroundRegion = new TextureRegion(backgroundTexture);
         this.width = backgroundTexture.getWidth();
