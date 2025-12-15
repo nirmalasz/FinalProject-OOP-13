@@ -1,12 +1,13 @@
 package com.kelompok13.frontend.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.kelompok13.frontend.services.BackendService;
 
 public class GameManager {
     private static GameManager instance;
     private boolean gameActive;
     //private ScoreManager scoreManager;
-    // private BackendService backendService; // u req api
+    private BackendService backendService; // u req api
     private String currentPlayerId; //untuk uuid
     private int currencyCollected = 0;
 
