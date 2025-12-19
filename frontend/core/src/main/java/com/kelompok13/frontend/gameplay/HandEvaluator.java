@@ -2,6 +2,7 @@ package com.kelompok13.frontend.gameplay;
 
 
 import com.kelompok13.frontend.card.*;
+import com.kelompok13.frontend.card.effects.JokerEffect;
 
 import java.util.*;
 
@@ -12,8 +13,18 @@ import java.util.*;
 //3. two pair
 //4. full house
 public class HandEvaluator {
-
-    int result = 0;
+       private static final Map<String, Integer> HAND_RANKINGS = Map.ofEntries(
+        Map.entry("High Card", 1),
+        Map.entry("Pair", 2),
+        Map.entry("Two Pair", 3),
+        Map.entry("Three of a Kind", 4),
+        Map.entry("Straight", 5),
+        Map.entry("Flush", 6),
+        Map.entry("Full House", 7),
+        Map.entry("Four of a Kind", 8),
+        Map.entry("Straight Flush", 9),
+        Map.entry("Royal Flush", 10)
+    );
 
     //untuk sementara beberapa aja
     Map<String, Integer> handRankings = new HashMap<>(){{
@@ -29,59 +40,75 @@ public class HandEvaluator {
         put("Royal Flush", 10);
     }};
 
+    private String currentHandType = "No Cards";
+    private List<Integer> scoringCards = new ArrayList<>();
+
     List<Integer> countedValues = new ArrayList<>();
     List<Integer> valuesCounted = new ArrayList<>();
 
     private int countResult(int multiplier){
-        for(Integer card: countedValues){
+        int result = 0;
+        for(Integer card: scoringCards){
             result += card;
         }
         result *= multiplier;
-        return  result;
-    }
-
-
-    public int evaluateHand(List<PlayingCard> selectedCard, List<JokerCard> jokerCards){
-        valuesCounted.add(checkFlush(selectedCard));
-        valuesCounted.add(checkThreeOfAKind(selectedCard));
-        valuesCounted.add(checkHighCard(selectedCard));
-        valuesCounted.add(checkStraight(selectedCard));
-        valuesCounted.add(pairCount(selectedCard));
-
-        valuesCounted.stream().sorted();
-        int highestHand = valuesCounted.get(0);
-
-        result = countResult(highestHand);
-
-        if (!jokerCards.isEmpty()){
-
-        }
         return result;
     }
 
-    private int checkFlush(List<PlayingCard> selectedCard){
-        for (PlayingCard card: selectedCard){
-            if (card.getSuit() != selectedCard.get(0).getSuit()){
-                return 0;
-            }
-            countedValues.add(card.getValue());
+
+    public int evaluateHandScore(List<PlayingCard> selectedCard){
+        int result = 0;
+        if (selectedCard.isEmpty()){
+            currentHandType = "No Cards";
         }
-        return handRankings.get("Flush");
+
+        if (checkFlush(selectedCard)){
+            result =  countResult(handRankings.get("Flush"));
+        }
+        if (checkStraight(selectedCard)){
+            result =  countResult(handRankings.get("Straight"));
+        }
+
+
+        return result;
     }
 
-    private int checkStraight(List<PlayingCard> selectedCard){
+    private boolean checkFlush(List<PlayingCard> cards) {
+        boolean flush = true;
+        CardSuit firstSuit = cards.get(0).getSuit();
+        for (PlayingCard card : cards) {
+            if (card.getSuit() != firstSuit) {
+                flush = false;
+                break;
+            }
+        }
+        if (flush) {
+            scoringCards.clear();
+            for (PlayingCard card : cards) {
+                scoringCards.add(card.getValue());
+            }
+            currentHandType = "Flush";
+            return flush;
+        }
+        return flush;
+    }
+
+    private boolean checkStraight(List<PlayingCard> selectedCard) {
         List<Integer> values = new ArrayList<>();
-        for (PlayingCard card: selectedCard){
+        for (PlayingCard card : selectedCard) {
             values.add(card.getValue());
         }
         Collections.sort(values);
-        for (int i = 0; i < values.size() - 1; i++){
-            if (values.get(i) + 1 == values.get(i + 1)){
-                countedValues.add(values.get(i));
-                return handRankings.get("Straight");
+
+        scoringCards.clear();
+        for (int i = 0; i < values.size() - 1; i++) {
+            if (values.get(i + 1) - values.get(i) != 1 && i < 3) {
+                return  false;
             }
+            if (i < 5) scoringCards.add(values.get(i));
         }
-        return 0;
+        currentHandType = "Straight";
+        return true;
     }
 
     private int checkHighCard(List<PlayingCard> selectedCard){
