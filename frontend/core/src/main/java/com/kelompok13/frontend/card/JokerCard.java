@@ -19,6 +19,7 @@ public class JokerCard extends BaseCard{
         this.effect = effect;
     }
 
+    // apply the effect of the joker card
     public int applyEffect(String type, int value){
         if (effect != null){
             return effect.applyEffect(type, value);
