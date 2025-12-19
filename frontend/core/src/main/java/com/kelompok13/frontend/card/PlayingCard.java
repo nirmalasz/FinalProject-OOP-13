@@ -15,9 +15,9 @@ public class PlayingCard extends BaseCard{
 
     public int computeCardValue(CardRank cardRank){
         switch (cardRank) {
-            case ACE: return 13;
-            case KING_CARD:
-            case QUEEN_CARD:
+            case ACE: return 14;
+            case KING_CARD: return 13;
+            case QUEEN_CARD: return 12;
             case JACK_CARD: return 11;
             case NO2: return 2;
             case NO3: return 3;

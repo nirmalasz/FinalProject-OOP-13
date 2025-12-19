@@ -6,4 +6,6 @@ package com.kelompok13.frontend.gameplay;
 // trigger victory/defeat
 public class CombatResolver {
 
+
+
 }
