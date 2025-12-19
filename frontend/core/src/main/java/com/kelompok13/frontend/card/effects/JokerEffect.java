@@ -2,26 +2,38 @@
 package com.kelompok13.frontend.card.effects;
 
 public class JokerEffect implements CardEffect {
-    private int point;
-    private String type;
+    private int modifier;
+    private EffectType type;
 
-    public JokerEffect(int bonusPoints, String type) {
+    public JokerEffect(int modifier, EffectType type) {
+        this.modifier = modifier;
         this.type = type;
-        this.point = bonusPoints;
     }
 
     @Override
-    public int applyEffect(String type, int value) {
-        int newValue;
-        if (type.equals("ADD")) {
-            newValue = value + point;
-            System.out.println("Joker Add Applied: " + newValue);
-        } else if(type.equals("MULTIPLY")) {
-            newValue = value * point;
-            System.out.println("Joker Multiply Applied: " + newValue);
-        } else {
-            return 0;
+    public int applyEffect(int currentValue) {
+        switch(type) {
+            case MULTIPLY_SCORE:
+                System.out.println("Multiply score by" + modifier);
+                return currentValue * modifier;
+            case BONUS_POINT:
+                System.out.println("Add score by" + modifier);
+                return currentValue + modifier;
+            default:
+                return currentValue;
         }
-        return newValue;
+    }
+
+    @Override
+    public EffectType getEffectType() {
+        return type;
+    }
+
+    public void setModifier(int modifier) {
+        this.modifier = modifier;
+    }
+
+    public int getModifier() {
+        return modifier;
     }
 }

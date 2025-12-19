@@ -20,10 +20,7 @@ public class JokerCard extends BaseCard{
     }
 
     // apply the effect of the joker card
-    public int applyEffect(String type, int value){
-        if (effect != null){
-            return effect.applyEffect(type, value);
-        }
-        return value;
+    public int applyEffect(JokerCard jokerCard, int score){
+        return jokerCard.getEffect().applyEffect(score);
     }
 }

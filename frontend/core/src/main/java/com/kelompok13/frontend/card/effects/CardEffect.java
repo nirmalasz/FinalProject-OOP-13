@@ -2,5 +2,11 @@
 package com.kelompok13.frontend.card.effects;
 
 public interface CardEffect {
-    int applyEffect(String type, int value);
+    enum EffectType {
+        MULTIPLY_SCORE,
+        BONUS_POINT
+    }
+
+    int applyEffect(int currentValue);
+    EffectType getEffectType();
 }
