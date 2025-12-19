@@ -36,7 +36,8 @@ public abstract class BaseCard {
 
     // Or set directly from a TextureRegion (useful when getting region from an atlas)
     public void setTextureRegion(TextureRegion region, boolean ownsTexture) {
-        this.textureRegion = region;
+        this.textureRegion = region != null ?
+            new TextureRegion(region) : null;
         this.ownsTexture = ownsTexture;
     }
 

@@ -2,11 +2,11 @@
 package com.kelompok13.frontend.card.effects;
 
 public class JokerEffect implements CardEffect {
-    private int modifier;
+    private int amount;
     private EffectType type;
 
     public JokerEffect(int modifier, EffectType type) {
-        this.modifier = modifier;
+        this.amount = modifier;
         this.type = type;
     }
 
@@ -14,11 +14,11 @@ public class JokerEffect implements CardEffect {
     public int applyEffect(int currentValue) {
         switch(type) {
             case MULTIPLY_SCORE:
-                System.out.println("Multiply score by" + modifier);
-                return currentValue * modifier;
+                System.out.println("Multiply score by" + amount);
+                return currentValue * amount;
             case BONUS_POINT:
-                System.out.println("Add score by" + modifier);
-                return currentValue + modifier;
+                System.out.println("Add score by" + amount);
+                return currentValue + amount;
             default:
                 return currentValue;
         }
@@ -29,11 +29,11 @@ public class JokerEffect implements CardEffect {
         return type;
     }
 
-    public void setModifier(int modifier) {
-        this.modifier = modifier;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
-    public int getModifier() {
-        return modifier;
+    public int getAmount() {
+        return amount;
     }
 }

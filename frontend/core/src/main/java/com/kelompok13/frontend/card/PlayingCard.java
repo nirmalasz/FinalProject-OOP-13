@@ -1,10 +1,28 @@
 //standard card
 package com.kelompok13.frontend.card;
 
+import java.util.Map;
+
 public class PlayingCard extends BaseCard{
     private CardSuit suit;
     private CardRank rank;
     private int value;
+
+    private static final Map<CardRank, Integer> RANK_VALUES = Map.ofEntries(
+        Map.entry(CardRank.ACE, 14),
+        Map.entry(CardRank.KING, 13),
+        Map.entry(CardRank.QUEEN, 12),
+        Map.entry(CardRank.JACK, 11),
+        Map.entry(CardRank.TWO, 2),
+        Map.entry(CardRank.THREE, 3),
+        Map.entry(CardRank.FOUR, 4),
+        Map.entry(CardRank.FIVE, 5),
+        Map.entry(CardRank.SIX, 6),
+        Map.entry(CardRank.SEVEN, 7),
+        Map.entry(CardRank.EIGHT, 8),
+        Map.entry(CardRank.NINE, 9),
+        Map.entry(CardRank.TEN, 10)
+    );
 
     public PlayingCard(CardSuit suit, CardRank rank) {
         super(rank.toString() + " of " + suit.toString(), CardType.PLAYING);
@@ -13,23 +31,8 @@ public class PlayingCard extends BaseCard{
         this.value = computeCardValue(rank);
     }
 
-    public int computeCardValue(CardRank cardRank){
-        switch (cardRank) {
-            case ACE: return 14;
-            case KING_CARD: return 13;
-            case QUEEN_CARD: return 12;
-            case JACK_CARD: return 11;
-            case NO2: return 2;
-            case NO3: return 3;
-            case NO4: return 4;
-            case NO5: return 5;
-            case NO6: return 6;
-            case NO7: return 7;
-            case NO8: return 8;
-            case NO9: return 9;
-            case NO10: return 10;
-            default: return 0; // fallback for unexpected enum values
-        }
+    public int computeCardValue(CardRank cardRank) {
+        return RANK_VALUES.getOrDefault(cardRank, 0);
     }
 
     public int getValue() {
