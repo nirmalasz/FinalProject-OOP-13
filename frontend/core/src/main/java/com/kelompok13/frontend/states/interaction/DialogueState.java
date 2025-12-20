@@ -10,7 +10,7 @@ import com.kelompok13.frontend.states.gameplay.PlayingState;
 
 public class DialogueState implements GameState {
     private GameStateManager gsm;
-    
+
     private Texture[] dialogue;
     private int currentDialogue = 0;
 
@@ -30,10 +30,10 @@ public class DialogueState implements GameState {
             currentDialogue++;
 
             if (currentDialogue >= dialogue.length) {
-                gsm.update(new PlayingState(gsm));
+                //gsm.update(new PlayingState(gsm));
             }
         }
-        
+
     }
 
     @Override
