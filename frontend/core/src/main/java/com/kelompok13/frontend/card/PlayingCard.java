@@ -46,4 +46,9 @@ public class PlayingCard extends BaseCard{
     public CardRank getRank() {
         return rank;
     }
+
+    // setter value in case we need to modify based on enemy
+    public void setValue(int value) {
+        this.value = value;
+    }
 }
