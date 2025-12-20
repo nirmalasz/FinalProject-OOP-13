@@ -11,6 +11,7 @@ public abstract class BaseCharacter {
     protected Vector2 position;
     protected Rectangle bound;
     protected String[] dialogues;
+    protected boolean canInteract = true;
 
     public BaseCharacter(String name, Vector2 position, float width, float height){
         this.name = name;
@@ -26,7 +27,7 @@ public abstract class BaseCharacter {
         return bound.overlaps(playerBound);
     }
 
-    abstract void onInteract();
+    public abstract void onInteract();
     public abstract void update(float delta);
     public abstract void render(SpriteBatch batch);
 
@@ -40,5 +41,20 @@ public abstract class BaseCharacter {
 
     public String getName() {
         return name;
+    }
+
+    public void setPosition(Vector2 position) {
+        this.position = position;
+    }
+
+    public boolean isInteractable() {
+        return canInteract;
+    }
+
+    public void setInteractable(boolean interactable) {
+        this.canInteract = interactable;
+    }
+    public void dispose() {
+
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.kelompok13.frontend.card.PlayingCard;
+import com.kelompok13.frontend.models.Currency;
 
 import java.util.List;
 
@@ -19,9 +20,7 @@ public class Player {
 
     private float width = 128f;
     private float height = 128f;
-
-    private List<PlayingCard> hand;
-    private int currency;
+    private Currency money;
 
     private Texture walkTexture;
     private Animation<TextureRegion> walkUp;
@@ -39,7 +38,7 @@ public class Player {
     public Player(Vector2 startPosition){
         this.position = new Vector2(startPosition);
         collider = new Rectangle(position.x, position.y, width, height);
-
+        this.money = new Currency();
         initializeAnimations();
     }
 
@@ -204,6 +203,10 @@ public class Player {
     public float getWidth() {return width;}
 
     public float getHeight() {return height;}
+
+    public Currency getMoney() {
+        return money;
+    }
 
     public void dispose(){
         if (walkTexture != null) walkTexture.dispose();}

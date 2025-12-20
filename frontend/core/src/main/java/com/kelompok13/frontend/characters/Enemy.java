@@ -9,7 +9,7 @@ public class Enemy extends BaseCharacter {
     private Texture texture;
     private EnemyStrategy battleStrategy;
     private int rewardMoney;
-    private boolean isDefeated;
+    public boolean isDefeated;
     private Texture idleTexture;
     private Texture defeatedTexture;
 
@@ -47,7 +47,7 @@ public class Enemy extends BaseCharacter {
     }
 
     @Override
-    void onInteract() {
+    public void onInteract() {
         if (!isDefeated){
             //will trigger dialogue before defeated
         } else {
@@ -69,5 +69,17 @@ public class Enemy extends BaseCharacter {
                 bound.width,
                 bound.height);
         }
+    }
+
+    public boolean isDefeated() {
+        return  isDefeated;
+    }
+
+    public EnemyStrategy getBattleStrategy() {
+        return battleStrategy;
+    }
+
+    public int getRewardMoney() {
+        return rewardMoney;
     }
 }
