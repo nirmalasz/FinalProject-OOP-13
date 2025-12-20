@@ -1,5 +1,6 @@
 package com.kelompok13.frontend.factories.card;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.kelompok13.frontend.card.BaseCard;
 import com.kelompok13.frontend.card.JokerCard;
 import com.kelompok13.frontend.card.effects.CardEffect;
@@ -11,8 +12,11 @@ import static com.kelompok13.frontend.card.effects.CardEffect.EffectType.MULTIPL
 public class JokerCardCreator implements CardFactory.CardCreator {
     @Override
     public BaseCard createCard() {
-        JokerEffect 
-        JokerCard jokerCard = new JokerCard();
+        JokerEffect effect= new JokerEffect(3, MULTIPLY_SCORE);
+        JokerCard jokerCard = new JokerCard(effect);
+        Texture texture = new Texture("cards/joker_card.png");
+        jokerCard.setTexture(texture, false);
+        return jokerCard;
     }
 
 }

@@ -42,11 +42,10 @@ public class HandEvaluator {
 
     private String currentHandType = "No Cards";
     private List<Integer> scoringCards = new ArrayList<>();
-
     List<Integer> countedValues = new ArrayList<>();
-    List<Integer> valuesCounted = new ArrayList<>();
 
-    private int countResult(int multiplier){
+
+    public int countResult(int multiplier){
         int result = 0;
         for(Integer card: scoringCards){
             result += card;
@@ -57,34 +56,38 @@ public class HandEvaluator {
 
 
     public int evaluateHandScore(List<PlayingCard> selectedCard, int handsize){
-        int result = 0;
         if (selectedCard.isEmpty()){
             currentHandType = "No Cards";
         }
 
         if (checkFlush(selectedCard, handsize) && checkStraight(selectedCard)){
             currentHandType = "Straight Flush";
-            result =  countResult(handRankings.get("Straight Flush"));
-            return result;
+            return countResult(handRankings.get("Straight Flush"));
         }
         if (checkFlush(selectedCard, handsize)){
-            result =  countResult(handRankings.get("Flush"));
+            currentHandType = "Flush";
+            return countResult(handRankings.get("Flush"));
         }
         if (checkStraight(selectedCard)){
-            result =  countResult(handRankings.get("Straight"));
+            currentHandType = "Straight";
+            return countResult(handRankings.get("Straight"));
         }
         if (checkPair(selectedCard)){
             if (currentHandType.equals("Two Pair")){
-                result =  countResult(handRankings.get("Two Pair"));
+                return countResult(handRankings.get("Two Pair"));
             } else if (currentHandType.equals("Pair")){
-                result =  countResult(handRankings.get("Pair"));
+                return countResult(handRankings.get("Pair"));
             }
         }
-        if (checkHighCard(selectedCard)){
-            result =  countResult(handRankings.get("High Card"));
-        }
 
-        return result;
+        //default high card
+        checkHighCard(selectedCard);
+        currentHandType = "High Card";
+        return countResult(handRankings.get("High Card"));
+    }
+
+    public String getCurrentHandType() {
+        return currentHandType;
     }
 
     private boolean checkFlush(List<PlayingCard> selectedCard, int handsize) {
@@ -92,8 +95,8 @@ public class HandEvaluator {
         for (PlayingCard card : selectedCard) {
             suitCount.put(card.getSuit(), suitCount.getOrDefault(card.getSuit(), 0) + 1);
         }
+        if (suitCount.size() < 5) return false;
         scoringCards.clear();
-
         for (Map.Entry<CardSuit, Integer> entry : suitCount.entrySet()) {
             if (entry.getValue() >= handsize) {
                 CardSuit flushSuit = entry.getKey();
@@ -121,6 +124,7 @@ public class HandEvaluator {
         for (PlayingCard card : selectedCard) {
             values.add(card.getValue());
         }
+        if (values.size() < 5) return false;
         Collections.sort(values);
 
         scoringCards.clear();
@@ -148,40 +152,40 @@ public class HandEvaluator {
     }
 
     private boolean checkPair(List<PlayingCard> selectedCard){
-        int pairRank = pairCount(selectedCard);
-        if (pairRank > 0){
-            scoringCards.clear();
-            for (PlayingCard card: selectedCard){
-                if (countedValues.contains(card.getValue())){
-                    scoringCards.add(card.getValue());
-                }
-            }
-            if (pairRank == handRankings.get("Pair")){
-                currentHandType = "Pair";
-            } else if (pairRank == handRankings.get("Two Pair")){
-                currentHandType = "Two Pair";
-            }
+        int pairs = pairCount(selectedCard);
+
+        if (pairs == 2){
+            currentHandType = "Two Pair";
+            return true;
+        } else if (pairs == 1){
+            currentHandType = "Pair";
             return true;
         }
+
         return false;
     }
 
     //for one pair and two pair
     private int pairCount(List<PlayingCard> selectedCard){
-        List<Integer> valuesCounted = new ArrayList<>();
+        Map<Integer, Integer> valueCount = new HashMap<>();
         for (PlayingCard card: selectedCard){
-            valuesCounted.add(card.getValue());
+            int value = card.getValue();
+            valueCount.put(value, valueCount.getOrDefault(value, 0) + 1);
         }
+
         int pairs = 0;
         scoringCards.clear();
+        countedValues.clear();
 
-        for (int i: valuesCounted){
-            int freq = Collections.frequency(valuesCounted, i);
-            if (freq == 2 && !scoringCards.contains(i)){
+        for (Map.Entry<Integer, Integer> entry : valueCount.entrySet()) {
+            if (entry.getValue() == 2) {
                 pairs++;
-                scoringCards.add(i*2);
+                countedValues.add(entry.getKey());
+                scoringCards.add(entry.getKey());
+                scoringCards.add(entry.getKey()); // add twice for the pair
             }
         }
+
         return pairs;
     }
 

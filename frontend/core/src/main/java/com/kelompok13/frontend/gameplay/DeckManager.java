@@ -41,15 +41,26 @@ public class DeckManager {
 
     public void playCards(List<PlayingCard> selectedCards){
         List<PlayingCard> toPlay = new ArrayList<>(selectedCards);
+        int numPlayed = toPlay.size();
+
         currentHand.removeAll(toPlay);
         discardPile.addAll(toPlay);
+
+        for (int i = 0; i < numPlayed && !deckCards.isEmpty(); i++){
+            currentHand.add(deckCards.remove(0));
+        }
     }
 
     public void discardCards(List<PlayingCard> selectedCards){
-        List<PlayingCard> toPlay = new ArrayList<>(selectedCards);
-        currentHand.removeAll(toPlay);
-        discardPile.addAll(toPlay);
-        currentHand = drawCards();
+        List<PlayingCard> toDiscard = new ArrayList<>(selectedCards);
+        int numDiscarded = toDiscard.size();
+
+        currentHand.removeAll(toDiscard);
+        discardPile.addAll(toDiscard);
+
+        for (int i = 0; i < numDiscarded && !deckCards.isEmpty(); i++){
+            currentHand.add(deckCards.remove(0));
+        }
     }
 
     //after round ends
@@ -59,5 +70,11 @@ public class DeckManager {
         currentHand.clear();
     }
 
+    public List<PlayingCard> getCurrentHand() {
+        return currentHand;
+    }
 
+    public List<PlayingCard> getDiscardPile() {
+        return discardPile;
+    }
 }

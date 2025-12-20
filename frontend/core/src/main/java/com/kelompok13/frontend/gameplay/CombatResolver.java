@@ -10,15 +10,23 @@ import java.util.List;
 // determines round win or lose and currency reward
 // trigger victory/defeat
 public class CombatResolver {
-    private HandEvaluator handEvaluator;
+    private HandEvaluator handEvaluator ;
+
+
+    public CombatResolver(HandEvaluator evaluator) {
+        this.handEvaluator = evaluator;
+    }
 
     public int calculateScore(List<PlayingCard> hand){
         return handEvaluator.evaluateHandScore(hand, hand.size());
     }
 
     public boolean determineVictory(int neededScore, List<PlayingCard> hand){
-        if (neededScore <= calculateScore(hand)) return true;
-        return false;
+        return neededScore <= calculateScore(hand);
+    }
+
+    public String getHandType() {
+        return handEvaluator.getCurrentHandType();
     }
 
 
