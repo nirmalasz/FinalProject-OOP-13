@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 
 // simple manager that handle a current background and a next background for transitions
 // crossfade transition: renders current with alpha (1 - t) and next with t while t goes 0..1.
-
 public class BackgroundManager {
     private Background current;
     private Background next;
@@ -43,31 +42,12 @@ public class BackgroundManager {
     public void transitionTo(Background bg, float durationSeconds) {
         if (bg == null) return;
         if (bg == current) return; // no transition if same object
-        // avoid interrupting in-progress transition by replacing next (you can change this policy)
+
         this.next = bg;
         this.transitionDuration = Math.max(0.001f, durationSeconds);
         this.transitionProgress = 0f;
         this.transitioning = true;
         this.transitionType = TransitionType.CROSSFADE;
-    }
-
-    // Helper: start loading an asset via AssetManager and transition once it's loaded.
-    // This method only queues the load, still need to call assetManager.update() each frame in
-    // screen
-    public void loadAssetForTransition(String assetPath) {
-        if (assets == null) throw new IllegalStateException("AssetManager not provided");
-        assets.load(assetPath, com.badlogic.gdx.graphics.Texture.class);
-    }
-
-    // Call after assets.update() returns true for the path
-    // Creates Background using the AssetManager-held Texture and starts the transition.
-    public void tryFinishQueuedAssetTransition(String assetPath, ResizeMode mode, boolean tileX, boolean tileY, float durationSeconds) {
-        if (assets == null) throw new IllegalStateException("AssetManager not provided");
-        if (!assets.isLoaded(assetPath)) return;
-        com.badlogic.gdx.graphics.Texture tex = assets.get(assetPath, com.badlogic.gdx.graphics.Texture.class);
-        // ownsTexture = false because AssetManager manages disposal
-        Background bg = new Background(tex, mode, tileX, tileY, false);
-        transitionTo(bg, durationSeconds);
     }
 
     // Update transition state. Call each frame w delta
@@ -86,7 +66,7 @@ public class BackgroundManager {
         }
     }
 
-    // Render should be called inside batch.begin()/end() with camera matrix already set.
+    // called inside batch.begin()/end() with camera matrix already set
     public void render(SpriteBatch batch, OrthographicCamera camera, float vpW, float vpH) {
         if (current == null && next == null) return;
 
@@ -100,17 +80,8 @@ public class BackgroundManager {
         }
     }
 
-    public boolean isTransitioning() { return transitioning; }
 
-    // Cancel the pending transition: dispose next (if owned) and keep current
-    public void cancelTransition() {
-        if (next != null) next.dispose();
-        next = null;
-        transitioning = false;
-        transitionProgress = 0f;
-    }
-
-    // Dispose owned backgrounds. If ownsTexture=false it will not be disposed here.
+    // Dispose owned backgrouns.
     public void dispose() {
         if (current != null) current.dispose();
         if (next != null) next.dispose();

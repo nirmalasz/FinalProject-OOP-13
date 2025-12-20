@@ -15,6 +15,7 @@ import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.factories.CharacterFactory;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
+import com.kelompok13.frontend.states.interaction.InventoryState;
 import com.kelompok13.frontend.states.menu.EndingState;
 import com.kelompok13.frontend.utils.Player;
 
@@ -50,14 +51,14 @@ public class PlayingState  implements GameState {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         this.camera = new OrthographicCamera();
-        // this.camera.setToOrtho(false, 800, 480);
+        this.camera.setToOrtho(false, 800, 480);
         this.characters = new ArrayList<>();
         this.characterFactory = new CharacterFactory();
         initializeBarScene();
     }
 
     private void initializeBarScene(){
-        player = new Player(new Vector2(10,10));
+        player = new Player(new Vector2(20,20));
         createBarCharacters();
     }
 
@@ -122,7 +123,8 @@ public class PlayingState  implements GameState {
 
         // Open inventory
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
-            // gsm.push(new InventoryState(gsm));
+            InventoryState inventoryState = new InventoryState(gsm, this);
+            gsm.push(inventoryState);
         }
 
     }
@@ -132,7 +134,7 @@ public class PlayingState  implements GameState {
         // Set camera projection
         batch.setProjectionMatrix(camera.combined);
 
-        batch.begin();
+        //batch.begin();
 
         // Render all characters
         for (BaseCharacter character : characters) {
@@ -142,7 +144,7 @@ public class PlayingState  implements GameState {
         // Render player
         player.render(batch);
 
-        batch.end();
+        //batch.end();
     }
 
     @Override
@@ -198,5 +200,9 @@ public class PlayingState  implements GameState {
                 }
             }
         }
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera; // or however you access your game camera
     }
 }

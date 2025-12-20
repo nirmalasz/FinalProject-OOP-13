@@ -52,7 +52,7 @@ public class Player {
         this.position = new Vector2(startPosition);
         collider = new Rectangle(position.x, position.y, width, height);
         this.money = new Currency();
-        playerTexture = new Texture(Gdx.files.internal("player.png"));
+        playerTexture = new Texture(Gdx.files.internal("mc/player.png"));
         //for now
         walkTexture = playerTexture;
         initializeAnimations();

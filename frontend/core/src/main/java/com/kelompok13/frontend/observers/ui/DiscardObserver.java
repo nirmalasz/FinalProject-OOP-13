@@ -10,7 +10,8 @@ public class DiscardObserver implements Observer {
     public void update(Event event) {
         if (event.type == EventType.DISCARD_COUNT) {
             HandDiscardPayLoad data = event.getDataAs(HandDiscardPayLoad.class);
-            System.out.println("Sisa Discard Player " + data.playerId + " : " + data.count);
+            System.out.println("Sisa Discard Player " + " : Discard=" + data.remainingDiscard +
+                ", Play=" + data.remainingPlay);
         }
     }
 }

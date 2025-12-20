@@ -6,11 +6,8 @@ public class HandDiscardPayLoad {
     public int remainingDiscard;
     public int remainingPlay;
 
-    // for both discard and play count
-    public UUID playerId;
 
-    public HandDiscardPayLoad(UUID playerId, int remainingDiscard, int remainingPlay) {
-        this.playerId = playerId;
+    public HandDiscardPayLoad( int remainingDiscard, int remainingPlay) {
         this.remainingDiscard = remainingDiscard;
         this.remainingPlay = remainingPlay;
     }

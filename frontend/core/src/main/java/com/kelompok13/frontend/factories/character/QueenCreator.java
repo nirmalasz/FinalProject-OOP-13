@@ -15,7 +15,7 @@ public class QueenCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
             //
         };
-        Enemy queen = new Enemy("Queen", new Vector2(500, 300), new JackStrategy(), 200,
+        Enemy queen = new Enemy("Queen", new Vector2(150, 100), new JackStrategy(), 200,
             challengeDialogue, defeatDialogue);
         queen.setTexture(new Texture("characters/queen.png"));
         return queen;

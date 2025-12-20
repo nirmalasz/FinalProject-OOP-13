@@ -49,6 +49,8 @@ public class BattleState implements GameState {
     private void startBattle(){
         this.battleStarted = true;
         System.out.println("Battle started!");
+
+        //need to draw cards, setuphand, and start combaat resolver
     }
 
     private void endBattle(boolean playerWon){
@@ -62,7 +64,7 @@ public class BattleState implements GameState {
             System.out.println("Better luck next time!");
         }
 
-        gsm.pop(); // Return to the previous state (PlayingState)
+        resultDisplayTime = 0;
     }
 
     @Override
@@ -81,18 +83,36 @@ public class BattleState implements GameState {
             }
             return;
         }
+
+        //check if player play card
+        //evaluate hand
+        //determine win
+
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        batch.begin();
+        //batch.begin();
 
         float centerX = Gdx.graphics.getWidth() / 2;
         float centerY = Gdx.graphics.getHeight() / 2;
 
         if(!battleEnded){
-
+            font.draw(batch, "BATTLE: " + enemy.getName(), centerX - 50, centerY + 100);
+        } else {
+            // Draw result
+            if (playerWon) {
+                font.draw(batch, "VICTORY!", centerX - 40, centerY + 50);
+                font.draw(batch, "Reward: $" + enemy.getRewardMoney(),
+                    centerX - 50, centerY);
+            } else {
+                font.draw(batch, "DEFEAT!", centerX - 30, centerY + 50);
+            }
+            font.draw(batch, "Returning in " +
+                    String.format("%.1f", 3.0f - resultDisplayTime) + "s...",
+                centerX - 70, centerY - 50);
         }
+        //batch.end();
     }
 
     @Override

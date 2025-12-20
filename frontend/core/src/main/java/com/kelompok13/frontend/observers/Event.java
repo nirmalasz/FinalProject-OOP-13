@@ -10,7 +10,6 @@ public class Event {
     }
 
 
-
     @SuppressWarnings("unchecked") //ignore unchecked cast warning
     public <T> T getDataAs(Class<T> tClass) {
         if (data == null) return null;

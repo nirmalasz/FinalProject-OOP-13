@@ -20,15 +20,15 @@ public class EndingState implements GameState {
     public void update(float delta) {
         //enter utk back
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            gsm.update(new MenuState(gsm));
+           // gsm.replace(new MenuState(gsm));
         }
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        batch.begin();
+        //batch.begin();
         //render layar ending
-        batch.end();
+        //batch.end();
     }
 
     @Override

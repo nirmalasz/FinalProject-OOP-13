@@ -12,6 +12,7 @@ import com.kelompok13.frontend.states.gameplay.BattleState;
 import com.kelompok13.frontend.states.gameplay.PlayingState;
 import com.kelompok13.frontend.states.interaction.ShopState;
 import com.kelompok13.frontend.states.menu.MenuState;
+import com.kelompok13.frontend.states.menu.OpeningState;
 
 import java.util.Stack;
 
@@ -89,19 +90,45 @@ public class GameStateManager {
     }
 
     public void render(SpriteBatch batch){
+        batch.begin();
         renderBackground(batch);
-        states.peek().render(batch);
+        if (!states.isEmpty()) {
+            GameState currentState = states.peek();
+
+            if (currentState instanceof OpeningState) {
+                // For Stage-based states, end batch before calling render
+                batch.end();
+                currentState.render(batch); // Stage will use its own batch
+                batch.begin(); // Begin again for next frame
+            } else {
+                // For normal states
+                currentState.render(batch);
+            }
+        }
+        batch.end();
     }
 
     private void renderBackground(SpriteBatch batch){
-        OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.update();
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        OrthographicCamera camera;
+        GameState currentState = getCurrentState();
+
+        // Use the state's camera if it's a PlayingState, otherwise use a centered screen camera
+        if (currentState instanceof PlayingState) {
+            PlayingState playingState = (PlayingState) currentState;
+            camera = playingState.getCamera(); // You need to add a getCamera() method to PlayingState
+        } else {
+            // For menu/static states, create a simple centered camera
+            camera = new OrthographicCamera();
+            camera.setToOrtho(false, screenWidth, screenHeight);
+            camera.position.set(screenWidth / 2f, screenHeight / 2f, 0);
+            camera.update();
+        }
 
         batch.setProjectionMatrix(camera.combined);
-        backgroundManager.render(batch, camera,
-            Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
+        backgroundManager.render(batch, camera, screenWidth, screenHeight);
     }
 
     public void set(GameState state, BackgroundType bgType){

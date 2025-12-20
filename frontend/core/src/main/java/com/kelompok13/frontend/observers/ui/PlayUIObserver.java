@@ -10,7 +10,7 @@ public class PlayUIObserver implements Observer {
     public void update(Event event) {
         if (event.type == EventType.PLAY_COUNT) {
             HandDiscardPayLoad data = event.getDataAs(HandDiscardPayLoad.class);
-            System.out.println("Kartu dimainkan oleh Player " + data.playerId + ". Count: " + data.count);
+            System.out.println("Kartu dimainkan oleh Player " + ". Count: " + data.remainingPlay);
         }
     }
 }

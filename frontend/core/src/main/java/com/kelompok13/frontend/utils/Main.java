@@ -30,11 +30,8 @@ public class Main extends ApplicationAdapter {
 
         // Update game logic
         gsm.update(Gdx.graphics.getDeltaTime());
-
         // Render everything
-        batch.begin();
         gsm.render(batch);
-        batch.end();
     }
 
     @Override

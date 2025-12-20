@@ -68,35 +68,44 @@ public class Background {
             float drawW = texW * scale;
             float drawH = texH * scale;
 
-            // center on camera, apply parallax as small offset
-            float drawX = camCenterX - drawW / 2f + (1f - parallaxX) * (camCenterX);
-            float drawY = camCenterY - drawH / 2f + (1f - parallaxY) * (camCenterY);
+            // SIMPLIFIED: Center on camera with parallax effect
+            float parallaxOffsetX = (camCenterX - vpW / 2f) * (1f - parallaxX);
+            float parallaxOffsetY = (camCenterY - vpH / 2f) * (1f - parallaxY);
+
+            // Calculate position to center the background
+            float centerX = camCenterX - drawW / 2f;
+            float centerY = camCenterY - drawH / 2f;
+
+            // Apply parallax offset
+            float drawX = centerX + parallaxOffsetX;
+            float drawY = centerY + parallaxOffsetY;
 
             batch.draw(backgroundRegion, drawX, drawY, drawW, drawH);
 
         } else if (mode == ResizeMode.TILE) {
-            // tile to cover viewport:
-            // compute how many tiles needed and draw in loops
-            // align tiles with camera and parallax
-            float px = (camCenterX) * (1f - parallaxX);
-            float py = (camCenterY) * (1f - parallaxY);
+            //adjust this value to make tiles smaller/larger
+            float tileScale = 0.3f;
+            float scaledTexW = texW * tileScale;
+            float scaledTexH = texH * tileScale;
 
-            // start at viewport left-bottom in world coords
             float viewLeft = camCenterX - vpW / 2f;
+            float viewRight = camCenterX + vpW / 2f;
             float viewBottom = camCenterY - vpH / 2f;
+            float viewTop = camCenterY + vpH / 2f;
 
-            // compute first tile coordinates (aligned to texture)
-            float startX = viewLeft - (px % texW) - texW;
-            float startY = viewBottom - (py % texH) - texH;
+            float offsetX = camCenterX * (1f - parallaxX);
+            float offsetY = camCenterY * (1f - parallaxY);
 
-            int cols = (int) Math.ceil(vpW / texW) + 2;
-            int rows = (int) Math.ceil(vpH / texH) + 2;
+            int startTileX = (int)Math.floor((viewLeft - offsetX) / scaledTexW);
+            int endTileX = (int)Math.ceil((viewRight - offsetX) / scaledTexW);
+            int startTileY = (int)Math.floor((viewBottom - offsetY) / scaledTexH);
+            int endTileY = (int)Math.ceil((viewTop - offsetY) / scaledTexH);
 
-            for (int i = 0; i < cols; i++) {
-                for (int j = 0; j < rows; j++) {
-                    float x = startX + i * texW + (1f - parallaxX) * px;
-                    float y = startY + j * texH + (1f - parallaxY) * py;
-                    batch.draw(backgroundRegion, x, y, texW, texH);
+            for (int x = startTileX; x <= endTileX; x++) {
+                for (int y = startTileY; y <= endTileY; y++) {
+                    float drawX = x * scaledTexW + offsetX;
+                    float drawY = y * scaledTexH + offsetY;
+                    batch.draw(backgroundRegion, drawX, drawY, scaledTexW, scaledTexH);
                 }
             }
 
