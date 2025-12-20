@@ -8,6 +8,7 @@ import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
 
+//yayy
 public class BattleState implements GameState {
     private PlayingState playingState; // Reference to the main playing state
     private GameStateManager gsm;

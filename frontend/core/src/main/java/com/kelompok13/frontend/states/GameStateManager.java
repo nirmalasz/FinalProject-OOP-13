@@ -15,6 +15,7 @@ import com.kelompok13.frontend.states.menu.MenuState;
 
 import java.util.Stack;
 
+//yaay
 public class GameStateManager {
     private final Stack<GameState> states;
     private BackgroundManager backgroundManager;
