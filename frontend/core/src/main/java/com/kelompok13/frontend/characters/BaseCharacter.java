@@ -6,15 +6,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.HashMap;
-
-public abstract class BaseCharater {
+public abstract class BaseCharacter {
     protected String name;
     protected Vector2 position;
     protected Rectangle bound;
     protected String[] dialogues;
 
-    public BaseCharater(String name, Vector2 position, float width, float height){
+    public BaseCharacter(String name, Vector2 position, float width, float height){
         this.name = name;
         this.position = position;
         this.bound = new Rectangle(position.x, position.y, width, height);

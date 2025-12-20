@@ -1,9 +1,19 @@
 package com.kelompok13.frontend.factories.character;
-import com.kelompok13.frontend.characters.Queen;
+import com.badlogic.gdx.math.Vector2;
+import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.characters.BaseCharacter;
+import com.kelompok13.frontend.strategies.JackStrategy;
 
 public class QueenCreator {
     public BaseCharacter createCharacter() {
-        return new Queen();
+        String[] challengeDialogue = {
+            //
+        };
+        String[] defeatDialogue = {
+            //
+        };
+
+        return new Enemy("Queen", new Vector2(500, 300), new JackStrategy(), 200,
+            challengeDialogue, defeatDialogue);
     }
 }

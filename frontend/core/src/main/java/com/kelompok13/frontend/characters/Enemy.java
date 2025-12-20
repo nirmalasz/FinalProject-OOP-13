@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.kelompok13.frontend.strategies.EnemyStrategy;
 
-public class Enemy extends BaseCharater{
+public class Enemy extends BaseCharacter {
     private Texture texture;
     private EnemyStrategy battleStrategy;
     private int rewardMoney;
