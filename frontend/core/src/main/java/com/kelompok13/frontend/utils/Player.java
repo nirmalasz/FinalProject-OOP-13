@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.kelompok13.frontend.card.PlayingCard;
+
+import java.util.List;
 
 public class Player {
     private Vector2 position;
@@ -16,6 +19,9 @@ public class Player {
 
     private float width = 128f;
     private float height = 128f;
+
+    private List<PlayingCard> hand;
+    private int currency;
 
     private Texture walkTexture;
     private Animation<TextureRegion> walkUp;
