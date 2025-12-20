@@ -1,4 +1,27 @@
 package com.kelompok13.frontend.observers.ui;
 
-public class CardUIObserver {
+import com.kelompok13.frontend.observers.Observer;
+import com.kelompok13.frontend.observers.Event;
+import com.kelompok13.frontend.observers.EventType;
+import com.kelompok13.frontend.observers.payload.CardPayLoad;
+import com.kelompok13.frontend.card.PlayingCard;
+
+public class CardUIObserver implements Observer {
+    @Override
+    public void update(Event event) {
+        if (event.type == EventType.CARD_UPDATE) {
+            CardPayLoad data = event.getDataAs(CardPayLoad.class);
+
+            System.out.println("Updating tampilan kartu untuk Player: " + data.playerId);
+
+            for (PlayingCard card : data.cards) {
+                System.out.println("- Menampilkan Kartu: " + card.getRank() + " of " + card.getSuit());
+            }
+            renderCardsToScreen(data);
+        }
+    }
+
+    private void renderCardsToScreen(CardPayLoad data) {
+        // Logika render spesifik untuk LibGDX
+    }
 }
