@@ -10,8 +10,6 @@ public class Enemy extends BaseCharacter {
     private EnemyStrategy battleStrategy;
     private int rewardMoney;
     public boolean isDefeated;
-    private Texture idleTexture;
-    private Texture defeatedTexture;
 
     private String[] challengeDialogues;
     private String[] defeatedDialogues;
@@ -81,5 +79,9 @@ public class Enemy extends BaseCharacter {
 
     public int getRewardMoney() {
         return rewardMoney;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

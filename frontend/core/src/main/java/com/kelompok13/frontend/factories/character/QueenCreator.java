@@ -1,4 +1,5 @@
 package com.kelompok13.frontend.factories.character;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.characters.BaseCharacter;
@@ -14,8 +15,9 @@ public class QueenCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
             //
         };
-
-        return new Enemy("Queen", new Vector2(500, 300), new JackStrategy(), 200,
+        Enemy queen = new Enemy("Queen", new Vector2(500, 300), new JackStrategy(), 200,
             challengeDialogue, defeatDialogue);
+        queen.setTexture(new Texture("characters/queen.png"));
+        return queen;
     }
 }

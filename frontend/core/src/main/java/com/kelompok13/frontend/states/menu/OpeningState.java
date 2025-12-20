@@ -1,10 +1,10 @@
 package com.kelompok13.frontend.states.menu;
-//game intro (optional) 
+//game intro (optional)
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
-import com.kelompok13.frontend.GameManager; 
+import com.kelompok13.frontend.utils.GameManager;
 import com.kelompok13.frontend.utils.GameManager;
 
 public class OpeningState implements GameState {
@@ -26,12 +26,14 @@ public class OpeningState implements GameState {
         GameManager.getInstance().registerPlayer("Player :");
         GameManager.getInstance().startGame();
 
-        gsm.update(new MenuState(gsm)); //gamestate blm diimplements di menustate
+        // gsm.replace(new MenuState(gsm));
     }
 
     @Override
         public void render(SpriteBatch batch) {
         //UI
+        batch.begin();
+        batch.end();
     }
 
 

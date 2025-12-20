@@ -18,8 +18,8 @@ public class Player {
     private Vector2 position;
     private Rectangle collider;
 
-    private float width = 128f;
-    private float height = 128f;
+    private float width = 64f;
+    private float height = 64f;
     private Currency money;
 
     private Texture walkTexture;
@@ -29,16 +29,32 @@ public class Player {
     private Animation<TextureRegion> walkRight;
     private Animation<TextureRegion> currentAnimation;
 
+    // Animation
+    private Texture playerTexture;
+    private Animation<TextureRegion> walkAnimation;
+    private TextureRegion[] walkFrames;
     private TextureRegion currentFrame;
     private float stateTime;
+
     private float rotation = 0f;
 
-    private float baseSpeed = 300f;
+    // Movement
+    private float speed = 200f;
+    private Vector2 velocity = new Vector2();
+    private boolean isMoving = false;
+
+
+    private enum Direction { UP, DOWN, LEFT, RIGHT }
+    private Direction currentDirection = Direction.DOWN;
+
 
     public Player(Vector2 startPosition){
         this.position = new Vector2(startPosition);
         collider = new Rectangle(position.x, position.y, width, height);
         this.money = new Currency();
+        playerTexture = new Texture(Gdx.files.internal("player.png"));
+        //for now
+        walkTexture = playerTexture;
         initializeAnimations();
     }
 
@@ -133,9 +149,9 @@ public class Player {
     // (-1,0) = left, (1,0) = right, (0,1) = up, (0,-1) = down. (0,0) idle.
     public void update(float delta, Vector2 inputDirection){
         boolean moving = inputDirection != null && (inputDirection.x != 0 || inputDirection.y != 0);
-
+        stateTime += delta;
         if (moving){
-            Vector2 movement = new Vector2(inputDirection).nor().scl(baseSpeed * delta);
+            Vector2 movement = new Vector2(inputDirection).nor().scl(speed * delta);
             position.add(movement);
             collider.setPosition(position.x, position.y);
 
@@ -149,17 +165,13 @@ public class Player {
                 if (inputDirection.y > 0) currentAnimation = walkUp;
                 else currentAnimation = walkDown;
             }
-            updateAnimation(delta, true);
+            currentFrame = currentAnimation.getKeyFrame(stateTime, true);
         } else {
             // idle, first frame
-            updateAnimation(0, false);
+            currentFrame = currentAnimation.getKeyFrame(0);
         }
     }
 
-    private void updateAnimation(float delta, boolean looping){
-        stateTime += delta;
-        currentFrame = currentAnimation.getKeyFrame(stateTime, looping);
-    }
 
     public void updateCollider(){
         collider.setPosition(position.x+5, position.y+5);
@@ -189,6 +201,8 @@ public class Player {
         }
     }
 
+
+
     public void renderShape(ShapeRenderer shapeRenderer){
         shapeRenderer.setColor(0f,1f,0f,0.5f);
         shapeRenderer.rect(collider.x, collider.y, collider.width, collider.height);
@@ -208,7 +222,9 @@ public class Player {
         return money;
     }
 
-    public void dispose(){
-        if (walkTexture != null) walkTexture.dispose();}
-
+    public void dispose() {
+        if (playerTexture != null) {
+            playerTexture.dispose();
+        }
+    }
 }

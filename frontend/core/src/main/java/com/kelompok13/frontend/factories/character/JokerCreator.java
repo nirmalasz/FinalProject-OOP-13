@@ -1,4 +1,5 @@
 package com.kelompok13.frontend.factories.character;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.characters.BaseCharacter;
@@ -14,8 +15,9 @@ public class JokerCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
             //
         };
-
-        return new Enemy("Joker", new Vector2(500, 300), new JackStrategy(), 0,
+        Enemy joker = new Enemy("Joker", new Vector2(500, 300), new JackStrategy(), 0,
             challengeDialogue, defeatDialogue);
+        joker.setTexture(new Texture("characters/joker.png"));
+        return joker;
     }
 }
