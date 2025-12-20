@@ -1,52 +1,65 @@
 package com.kelompok13.frontend.states.interaction;
-// show player item only
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
 
 public class InventoryState implements GameState {
 
     private GameStateManager gsm;
-    private GameState previousState;
+    private Stage stage;
 
-    public InventoryState(GameStateManager gsm, GameState previousState) {
+    public InventoryState(GameStateManager gsm) {
         this.gsm = gsm;
-        this.previousState = previousState;
+
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        buildUI();
+    }
+
+    private void buildUI() {
+        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        Label title = new Label("=== INVENTORY ===", skin);
+        Label itemSlot = new Label("| ITEM SLOT |", skin);
+        Label jokerSlot = new Label("| JOKER SLOT |", skin);
+
+        TextButton closeButton = new TextButton("CLOSE", skin);
+        closeButton.addListener(e -> {
+            gsm.pop();
+            return true;
+        });
+
+        table.add(title).padBottom(30);
+        table.row();
+        table.add(itemSlot).padBottom(15);
+        table.row();
+        table.add(jokerSlot).padBottom(30);
+        table.row();
+        table.add(closeButton).width(200).height(50);
     }
 
     @Override
     public void update(float delta) {
-        //enter untuk balik state
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            gsm.pop();
-        }
+        stage.act(delta);
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        //batch.begin();
-        //render item/card
-        com.badlogic.gdx.graphics.Color original = batch.getColor();
-        batch.setColor(0.2f, 0.2f, 0.3f, 0.8f); // Semi-transparent dark blue
-        batch.draw(new com.badlogic.gdx.graphics.Texture(Gdx.files.internal("white_pixel.png")),
-            100, 100, 600, 280); // Background
-
-        batch.setColor(original); // Reset color
-
-        BitmapFont font = new BitmapFont();
-
-        font.draw(batch, "INVENTORY", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()-120);
-        font.draw(batch, "Press ESC or ENTER to close", 250, 150);
-
-        //batch.end();
-        font.dispose();
+        stage.draw();
     }
 
     @Override
     public void dispose() {
+        stage.dispose();
     }
 }
