@@ -5,6 +5,7 @@ import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.characters.BaseCharacter;
 import com.kelompok13.frontend.factories.CharacterFactory;
 import com.kelompok13.frontend.strategies.JackStrategy;
+import com.kelompok13.frontend.strategies.QueenStrategy;
 
 public class QueenCreator implements CharacterFactory.CharacterCreator {
     @Override
@@ -15,10 +16,10 @@ public class QueenCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
             //
         };
-        Enemy queen = new Enemy("Queen", new Vector2(800, 500), new JackStrategy(), 200,
+        Enemy queen = new Enemy("Queen", new Vector2(3300, 600), new QueenStrategy(), 200,
             challengeDialogue, defeatDialogue);
         queen.setTexture(new Texture("characters/queen.png"));
-        queen.setWidthHeight(3200, 4000);
+        queen.setWidthHeight(900, 1500);
         return queen;
     }
 }

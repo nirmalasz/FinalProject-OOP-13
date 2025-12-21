@@ -85,7 +85,7 @@ public class GameStateManager {
         if (!states.isEmpty()) {
             GameState currentState = states.peek();
 
-            if (currentState instanceof OpeningState || currentState instanceof InventoryState) {
+            if (currentState instanceof OpeningState || currentState instanceof InventoryState || currentState instanceof BattleState) {
                 // For Stage-based states, end batch before calling render
                 batch.end();
                 currentState.render(batch);

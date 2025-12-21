@@ -20,7 +20,6 @@ public class Bartender extends BaseCharacter {
 
     @Override
     public void onInteract(){
-
         if (dialogues == null || dialogues.length == 0) {
             System.out.println(name + ": ...");
             return;

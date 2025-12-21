@@ -16,10 +16,10 @@ public class JackCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
                 //
         };
-        Enemy jack = new Enemy("Jack", new Vector2(700, 1000), new JackStrategy(), 100,
+        Enemy jack = new Enemy("Jack", new Vector2(950, 800), new JackStrategy(), 100,
             challengeDialogue, defeatDialogue);
         jack.setTexture(new Texture("characters/Jack.png"));
-        jack.setWidthHeight(3200, 4000);
+        jack.setWidthHeight(1200, 1500);
         return jack;
     }
 }

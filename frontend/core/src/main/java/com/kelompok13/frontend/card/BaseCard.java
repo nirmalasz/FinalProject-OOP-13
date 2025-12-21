@@ -12,6 +12,8 @@ public abstract class BaseCard {
 
     protected TextureRegion textureRegion;
     private boolean ownsTexture = false;
+    private Texture inSceneTexture;
+    private TextureRegion inSceneTextureRegion;
 
     public BaseCard(String name, CardType type) {
         this.name = name;
@@ -20,6 +22,15 @@ public abstract class BaseCard {
 
     public String getName() {
         return name;
+    }
+
+    public void setInSceneTexture(Texture texture){
+        if (texture == null) {
+            this.inSceneTextureRegion = null;
+            return;
+        }
+        this.inSceneTexture = texture;
+        this.inSceneTextureRegion = new TextureRegion(texture);
     }
 
 

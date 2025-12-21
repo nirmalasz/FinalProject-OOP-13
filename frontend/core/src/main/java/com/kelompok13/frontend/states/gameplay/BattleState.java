@@ -4,7 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.kelompok13.frontend.card.CardTextureManager;
 import com.kelompok13.frontend.card.PlayingCard;
 import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.gameplay.CombatResolver;
@@ -15,6 +21,8 @@ import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +33,7 @@ public class BattleState implements GameState {
     private GameStateManager gsm;
     private Enemy enemy;
     private DeckManager deckManager;
+    private CardTextureManager cardTextureManager;
 
     // Battle state
     private boolean battleStarted;
@@ -32,8 +41,20 @@ public class BattleState implements GameState {
     private boolean playerWon;
     private float resultDisplayTime;
 
+    private Texture playButtonTexture;
+    private Texture playButtonPressedTexture;
+    private Texture discardButtonTexture;
+    private Texture discardButtonPressedTexture;
+    private Texture closeButtonTexture;
+    private Texture closeButtonPressedTexture;
+
+    private ImageButton playButton;
+    private ImageButton discardButton;
+    private ImageButton closeButton;
+
     private BitmapFont font;
     private ShapeRenderer shapeRenderer;
+    private Stage stage;
 
     private int playerScore;
 
@@ -48,14 +69,8 @@ public class BattleState implements GameState {
     private CombatResolver combatResolver;
     private int targetScore;
 
-    private Rectangle playButton;
-    private Rectangle discardButton;
-
-
     private Color cardColor = new Color (0.9f, 0.9f, 0.95f, 1f);
     private Color selectedCardColor = new Color (0.7f, 0.9f, 1f, 1f);
-
-
 
     public BattleState(GameStateManager gsm, Enemy enemy, PlayingState playingState){
         this.gsm = gsm;
@@ -72,12 +87,15 @@ public class BattleState implements GameState {
         this.combatResolver = new CombatResolver(handEvaluator);
         this.targetScore = enemy.getNeededScoreToWin();
 
+        this.cardTextureManager = CardTextureManager.getInstance();
+
         currentHand = new ArrayList<>();
         playedCards = new ArrayList<>();
         cardColliders = new ArrayList<>();
         selectedCards = new ArrayList<>();
 
         this.font = new BitmapFont();
+        this.font.getData().setScale(1.5f);
         this.shapeRenderer = new ShapeRenderer();
 
         this.playerScore = 0;
@@ -85,33 +103,98 @@ public class BattleState implements GameState {
         // Initialize UI
         this.font = new BitmapFont();
         this.shapeRenderer = new ShapeRenderer();
+        this.stage = new Stage();
 
-        initButtons();
+        loadTexture();
+        buildUI();
+        Gdx.input.setInputProcessor(stage);
 
         System.out.println("Battle against " + enemy.getName());
     }
 
-    private void initButtons(){
+    private void loadTexture(){
+        playButtonTexture = new Texture(Gdx.files.internal("button/play_button.png"));
+        playButtonPressedTexture = new Texture(Gdx.files.internal("button/play_button_pressed.png"));
+        discardButtonTexture = new Texture(Gdx.files.internal("button/discard_button.png"));
+        discardButtonPressedTexture = new Texture(Gdx.files.internal("button/discard_button_pressed.png"));
+        closeButtonTexture = new Texture(Gdx.files.internal("button/close_button.png"));
+        closeButtonPressedTexture = new Texture(Gdx.files.internal("button/close_button_pressed.png"));
+
+    }
+
+    private void buildUI(){
+        //play button
+        TextureRegionDrawable playUpDrawable =
+            new TextureRegionDrawable(new TextureRegion(playButtonTexture));
+        TextureRegionDrawable playDownDrawable =
+            new TextureRegionDrawable(new TextureRegion(playButtonPressedTexture));
+        playButton = new ImageButton(playUpDrawable, playDownDrawable);
+        //discard button
+        TextureRegionDrawable discardUpDrawable =
+            new TextureRegionDrawable(new TextureRegion(discardButtonTexture));
+        TextureRegionDrawable discardDownDrawable =
+            new TextureRegionDrawable(new TextureRegion(discardButtonPressedTexture));
+        discardButton = new ImageButton(discardUpDrawable, discardDownDrawable);
+        //close button
+        TextureRegionDrawable closeUpDrawable =
+            new TextureRegionDrawable(new TextureRegion(closeButtonTexture));
+        TextureRegionDrawable closeDownDrawable =
+            new TextureRegionDrawable(new TextureRegion(closeButtonPressedTexture));
+        closeButton = new ImageButton(closeUpDrawable, closeDownDrawable);
+
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
+        int buttonWidth = 150;
+        int buttonHeight = 70;
+        int spacing = 30;
 
+        playButton.setSize(buttonWidth, buttonHeight);
+        playButton.setPosition(
+            screenWidth / 2 - buttonWidth - spacing / 2, 50);
 
-        playButton = new Rectangle(
-            screenWidth / 2 - 100,
-            50, 80, 40);
+        discardButton.setSize(buttonWidth, buttonHeight);
+        discardButton.setPosition(
+            screenWidth / 2 + spacing / 2, 50);
 
-        discardButton = new Rectangle(
-            screenWidth /2 + 20,
-            50, 80, 40);
+        closeButton.setSize(100, 100);
+        closeButton.setPosition(screenWidth-120, 5);
+
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!battleEnded) {
+                    playSelectedCards();
+                }
+            }
+        });
+
+        discardButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!battleEnded) {
+                    discardSelectedCards();
+                }
+            }
+        });
+
+        closeButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                battleEnded = true;
+                playerWon = false;
+                gsm.pop();
+            }
+        });
+
+        stage.addActor(playButton);
+        stage.addActor(discardButton);
+        stage.addActor(closeButton);
     }
 
     private void startBattle(){
         this.battleStarted = true;
         System.out.println("Battle started!");
-
         drawHand();
-
-        //need to draw cards, setuphand, and start combaat resolver
     }
 
     private void drawHand(){
@@ -128,8 +211,8 @@ public class BattleState implements GameState {
         cardColliders.clear();
 
         int screenWidth = Gdx.graphics.getWidth();
-        int cardWidth = 80;
-        int cardHeight = 120;
+        int cardWidth = 100;
+        int cardHeight = 150;
         int spacing = 20;
 
         int totalWidth = currentHand.size() * (cardWidth + spacing) - spacing;
@@ -179,12 +262,8 @@ public class BattleState implements GameState {
             }
             return;
         }
-
-        //check if player play card
-        //evaluate hand
-        //determine win
         handleInput();
-
+        stage.act(delta);
     }
 
     @Override
@@ -196,6 +275,7 @@ public class BattleState implements GameState {
 
         if(!battleEnded){
             // Draw battle info
+            batch.begin();
             font.draw(batch, "BATTLE: " + enemy.getName(), centerX - 50, centerY + 100);
             font.draw(batch, "Score: " + playerScore + " / " + targetScore,
                 centerX - 50, centerY + 70);
@@ -203,15 +283,14 @@ public class BattleState implements GameState {
 
             // Draw cards and buttons
             renderCards(batch);
-            renderButtons(batch);
-            // Restart batch for text
             batch.begin();
-
             renderCardText(batch);
-            renderButtonText(batch);
+            batch.end();
+            stage.draw();
 
         } else {
             // Draw result
+            batch.begin();
             if (playerWon) {
                 font.draw(batch, "VICTORY!", centerX - 40, centerY + 50);
                 font.draw(batch, "Reward: $" + enemy.getRewardMoney(),
@@ -222,14 +301,19 @@ public class BattleState implements GameState {
             font.draw(batch, "Returning in " +
                     String.format("%.1f", 3.0f - resultDisplayTime) + "s...",
                 centerX - 70, centerY - 50);
+            batch.end();
         }
-        //batch.end();
     }
 
     @Override
     public void dispose() {
         font.dispose();
         shapeRenderer.dispose();
+        stage.dispose();
+        playButtonTexture.dispose();
+        playButtonPressedTexture.dispose();
+        discardButtonTexture.dispose();
+        discardButtonPressedTexture.dispose();
     }
 
     private void handleInput(){
@@ -249,14 +333,7 @@ public class BattleState implements GameState {
                     return;
                 }
             }
-
-            //check buttons clicked
-            if(playButton.contains(mouseX, mouseY)){
-                playSelectedCards();
-            } else if (discardButton.contains(mouseX, mouseY)){
-                discardSelectedCards();
         }
-    }
     }
     private void playSelectedCards(){
         List<PlayingCard> toPlay = new ArrayList<>();
@@ -319,67 +396,105 @@ public class BattleState implements GameState {
     }
 
     private void renderCards(SpriteBatch batch){
+        //shadow
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (int i = 0; i < currentHand.size(); i++) {
+            Rectangle cardRect = cardColliders.get(i);
+            shapeRenderer.setColor(0, 0, 0, 0.1f);
+            shapeRenderer.rect(cardRect.x + 4, cardRect.y - 4, cardRect.width, cardRect.height);
+        }
+        shapeRenderer.end();
+
+        batch.begin();
 
         for (int i = 0; i < currentHand.size(); i++){
             Rectangle cardRect = cardColliders.get(i);
             boolean selected = selectedCards.get(i);
+            PlayingCard card = currentHand.get(i);
 
-            // Draw card background
-            if (selected){
-                shapeRenderer.setColor(selectedCardColor);
+            float yOffset = selected ? 10f : 0f;
+
+            Texture cardTexture = cardTextureManager.getCardTexture(card);
+
+            if (cardTexture != null){
+                batch.draw(cardTexture,
+                    cardRect.x, cardRect.y +yOffset,
+                    cardRect.width, cardRect.height);
             } else {
-                shapeRenderer.setColor(cardColor);
+                //fallback if texture not found
+                batch.end();
+                shapeRenderer.begin();
+                // Draw card background
+                if (selected){
+                    shapeRenderer.setColor(selectedCardColor);
+                } else {
+                    shapeRenderer.setColor(cardColor);
+                }
+                shapeRenderer.rect(cardRect.x, cardRect.y + yOffset, cardRect.width, cardRect.height);
+                shapeRenderer.end();
+                batch.begin();
             }
-            shapeRenderer.rect(cardRect.x, cardRect.y, cardRect.width, cardRect.height);
 
             // Draw card border
-            shapeRenderer.setColor(Color.BLACK);
-            shapeRenderer.rect(cardRect.x, cardRect.y, cardRect.width, 2);
-            shapeRenderer.rect(cardRect.x, cardRect.y + cardRect.height - 2, cardRect.width, 2);
-            shapeRenderer.rect(cardRect.x, cardRect.y, 2, cardRect.height);
-            shapeRenderer.rect(cardRect.x + cardRect.width - 2, cardRect.y, 2, cardRect.height);
+//            shapeRenderer.setColor(Color.BLACK);
+//            shapeRenderer.rect(cardRect.x, cardRect.y, cardRect.width, 2);
+//            shapeRenderer.rect(cardRect.x, cardRect.y + cardRect.height - 2, cardRect.width, 2);
+//            shapeRenderer.rect(cardRect.x, cardRect.y, 2, cardRect.height);
+//            shapeRenderer.rect(cardRect.x + cardRect.width - 2, cardRect.y, 2, cardRect.height);
+            if (selected) {
+                batch.end();
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                Gdx.gl.glLineWidth(2);
+                shapeRenderer.setColor(Color.GOLD);
+                shapeRenderer.rect(cardRect.x, cardRect.y + yOffset, cardRect.width, cardRect.height);
+                shapeRenderer.end();
+                Gdx.gl.glLineWidth(1);
+                batch.begin();
+            }
         }
 
-        shapeRenderer.end();
+        batch.end();
     }
 
     private void renderCardText(SpriteBatch batch){
         // Draw card rank and suit
         for (int i = 0; i < currentHand.size(); i++){
-            Rectangle cardRect = cardColliders.get(i);
             PlayingCard card = currentHand.get(i);
+            // Only draw text if no texture
+            if (cardTextureManager.getCardTexture(card) == null){
+                Rectangle cardRect = cardColliders.get(i);
+                String rankText = card.getRank().toString();
+                String suitText = card.getSuit().toString().substring(0, 1); // First letter
 
-            String rankText = card.getRank().toString();
-            String suitText = card.getSuit().toString().substring(0, 1); // First letter
-
-            font.setColor(Color.BLACK);
-            font.draw(batch, rankText, cardRect.x + 10, cardRect.y + cardRect.height - 10);
-            font.draw(batch, suitText, cardRect.x + 10, cardRect.y + cardRect.height - 30);
-            font.setColor(Color.WHITE);
+                font.setColor(Color.BLACK);
+                font.draw(batch, rankText, cardRect.x + 10, cardRect.y + cardRect.height - 10);
+                font.draw(batch, suitText, cardRect.x + 10, cardRect.y + cardRect.height - 30);
+                font.setColor(Color.WHITE);
+            }
         }
     }
 
-    private void renderButtons(SpriteBatch batch){
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Draw Play Button
-        shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 1f); // Green for Play
-        shapeRenderer.rect(playButton.x, playButton.y, playButton.width, playButton.height);
-
-        // Draw Discard Button
-        shapeRenderer.setColor(0.8f, 0.2f, 0.2f, 1f); // Red for Discard
-        shapeRenderer.rect(discardButton.x, discardButton.y, discardButton.width, discardButton.height);
-
-        shapeRenderer.end();
-    }
-
-    private void renderButtonText(SpriteBatch batch){
-        font.setColor(Color.BLACK);
-        font.draw(batch, "PLAY",
-            playButton.x + 10, playButton.y + 25);
-        font.draw(batch, "DISCARD",
-            discardButton.x + 5, discardButton.y + 25);
-    }
+//    private void renderButtons(SpriteBatch batch){
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//
+//        // Draw Play Button
+//        shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 1f); // Green for Play
+//        shapeRenderer.rect(playButton.x, playButton.y, playButton.width, playButton.height);
+//
+//        // Draw Discard Button
+//        shapeRenderer.setColor(0.8f, 0.2f, 0.2f, 1f); // Red for Discard
+//        shapeRenderer.rect(discardButton.x, discardButton.y, discardButton.width, discardButton.height);
+//
+//        shapeRenderer.end();
+//    }
+//
+//    private void renderButtonText(SpriteBatch batch){
+//        font.setColor(Color.BLACK);
+//        font.draw(batch, "PLAY",
+//            playButton.x + 10, playButton.y + 25);
+//        font.draw(batch, "DISCARD",
+//            discardButton.x + 5, discardButton.y + 25);
+//    }
 
 }

@@ -13,13 +13,13 @@ public class BartenderCreator implements CharacterFactory.CharacterCreator {
     @Override
     public BaseCharacter createCharacter() {
         String[] dialogues = {
-           //
+           "Assalamualaikum, welcome to my bar!"
         };
-        Bartender bartender = new Bartender("NamaBartender", new Vector2(2000
-            , 1700),
+        Bartender bartender = new Bartender("Dodi", new Vector2(1800
+            , 2800),
             dialogues,
             texture);
-        bartender.setWidthHeight(2800, 3500);
+        bartender.setWidthHeight(1700, 2200);
         return bartender;
     }
 }

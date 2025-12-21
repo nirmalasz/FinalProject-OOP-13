@@ -53,5 +53,7 @@ public class ScoreManager implements Subject {
         System.out.println("Score set to: " + score);
     }
 
-
+    public int getScore() {
+        return score;
+    }
 }
