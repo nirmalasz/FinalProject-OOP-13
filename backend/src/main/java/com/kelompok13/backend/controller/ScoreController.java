@@ -131,7 +131,4 @@ public class ScoreController {
                     .body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
-
-
-
 }
