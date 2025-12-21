@@ -2,8 +2,10 @@ package com.kelompok13.frontend.states.interaction;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
@@ -26,7 +28,7 @@ public class InventoryState implements GameState {
     }
 
     private void buildUI() {
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
         Table table = new Table();
         table.setFillParent(true);
@@ -37,9 +39,11 @@ public class InventoryState implements GameState {
         Label jokerSlot = new Label("| JOKER SLOT |", skin);
 
         TextButton closeButton = new TextButton("CLOSE", skin);
-        closeButton.addListener(e -> {
-            gsm.pop();
-            return true;
+        closeButton.addListener( new ClickListener() {
+            @Override
+                public void clicked(InputEvent event, float x, float y) {
+                gsm.pop();
+            }
         });
 
         table.add(title).padBottom(30);
