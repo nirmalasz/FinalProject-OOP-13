@@ -23,7 +23,7 @@ public class InventoryState implements GameState {
     }
 
     private void buildUI() {
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
         Table table = new Table();
         table.setFillParent(true);
@@ -61,5 +61,6 @@ public class InventoryState implements GameState {
     @Override
     public void dispose() {
         stage.dispose();
+        Gdx.input.setInputProcessor(null); 
     }
 }

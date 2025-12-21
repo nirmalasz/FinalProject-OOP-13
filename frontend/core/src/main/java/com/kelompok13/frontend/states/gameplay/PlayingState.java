@@ -123,7 +123,7 @@ public class PlayingState  implements GameState {
 
         // Open inventory
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
-            InventoryState inventoryState = new InventoryState(gsm, this);
+            InventoryState inventoryState = new InventoryState(gsm);
             gsm.push(inventoryState);
         }
 
