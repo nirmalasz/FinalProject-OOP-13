@@ -57,4 +57,9 @@ public abstract class BaseCharacter {
     public void dispose() {
 
     }
+
+    public void setWidthHeight(int width, int height){
+        this.bound.width = width;
+        this.bound.height = height;
+    }
 }

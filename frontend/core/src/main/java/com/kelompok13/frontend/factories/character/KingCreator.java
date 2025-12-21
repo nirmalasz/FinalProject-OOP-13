@@ -15,9 +15,10 @@ public class KingCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
             //
         };
-        Enemy king= new Enemy("King", new Vector2(150, 350), new JackStrategy(), 300,
+        Enemy king= new Enemy("King", new Vector2(-200, 1300), new JackStrategy(), 300,
             challengeDialogue, defeatDialogue);
         king.setTexture(new Texture("characters/king.png"));
+        king.setWidthHeight(3300, 4000);
         return king;
     }
 }

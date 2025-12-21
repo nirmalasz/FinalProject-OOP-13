@@ -29,6 +29,7 @@ public class Enemy extends BaseCharacter {
 
     }
 
+
     private void startBattle(){
 
     }
