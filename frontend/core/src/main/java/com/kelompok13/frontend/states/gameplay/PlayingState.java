@@ -52,8 +52,10 @@ public class PlayingState  implements GameState {
         this.gsm = gsm;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
+
         this.camera = new OrthographicCamera();
-        this.camera.setToOrtho(false, 800, 480);
+        this.camera.setToOrtho(false, 5120/1.2f, 5120/1.2f);
+
         this.characters = new ArrayList<>();
         this.characterFactory = new CharacterFactory();
         this.inventory = new Inventory(5, 3);
@@ -65,7 +67,7 @@ public class PlayingState  implements GameState {
     }
 
     private void initializeBarScene(){
-        player = new Player(new Vector2(640 - 64,360-64));
+        player = new Player(new Vector2(5120/2 - 320,5120/2-320));
         createBarCharacters();
     }
 
@@ -180,7 +182,7 @@ public class PlayingState  implements GameState {
         player.update(delta, inputDirection);
 
         // Keep player within bounds
-        player.checkBoundaries(0, 0, 1280, 720);
+        player.checkBoundaries(0, 0, 5120, 8640);
     }
 
     private void updateCamera(float delta) {
@@ -190,6 +192,11 @@ public class PlayingState  implements GameState {
             player.getPosition().y + player.getHeight() / 2,
             0
         ), 0.1f);
+        float halfVPW = camera.viewportWidth / 2f;
+        float halfVPH = camera.viewportHeight / 2f;
+
+        camera.position.x = Math.max(halfVPW, Math.min(camera.position.x, 5120 - halfVPW));
+        camera.position.y = Math.max(halfVPH, Math.min(camera.position.y, 8640 - halfVPH));
         camera.update();
     }
 

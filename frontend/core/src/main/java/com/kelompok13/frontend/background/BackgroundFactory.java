@@ -5,7 +5,7 @@ public class BackgroundFactory {
     // path to background images
     private static final String PATH_START = "background/start.png";
     private static final String PATH_MENU  = "background/menu.png";
-    private static final String PATH_MAIN  = "background/main_tile.jpg";
+    private static final String PATH_MAIN  = "background/main_floor.png";
     private static final String PATH_BATTLE = "background/battle.png";
     private static final String PATH_DIALOGUE = "background/dialogue.png";
     private static final String PATH_SHOP  = "background/shop.png";
@@ -26,10 +26,9 @@ public class BackgroundFactory {
             case ENDING:
                 return new Background(PATH_ENDING, ResizeMode.COVER, false, false);
             case MAIN:
-                Background mainBg = new Background(PATH_MAIN, ResizeMode.TILE, true, true);
-                mainBg.setParallax(0.5f, 0.5f);
-                //Set world bounds to match player boundaries (0, 0, 1280, 720)
-                mainBg.setWorldBounds(0, 0, 1280, 720);
+                Background mainBg = new Background(PATH_MAIN, ResizeMode.STRETCH, false, false);
+                mainBg.setParallax(1.0f, 1.0f);
+                mainBg.setWorldBounds(0, 0, 5120, 5120);
                 return mainBg;
             default:
                 return new Background(PATH_START, ResizeMode.COVER, false, false);

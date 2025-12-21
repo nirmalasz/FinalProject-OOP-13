@@ -18,8 +18,13 @@ public class Player {
     private Vector2 position;
     private Rectangle collider;
 
-    private float width = 64f;
-    private float height = 64f;
+    private static final int SPRITE_COLS = 12;
+    private static final int SPRITE_ROWS = 1;
+    private static final float FRAME_WIDTH = 3764f / SPRITE_COLS;
+    private static final float FRAME_HEIGHT = 640f;
+
+    private float width = 313.67f;
+    private float height  = 640f;
     private Currency money;
 
     private Texture walkTexture;
@@ -39,7 +44,7 @@ public class Player {
     private float rotation = 0f;
 
     // Movement
-    private float speed = 200f;
+    private float speed = 300f;
     private Vector2 velocity = new Vector2();
     private boolean isMoving = false;
 
@@ -60,13 +65,10 @@ public class Player {
 
     private void initializeAnimations(){
         // load texture
-        //walkTexture = new Texture(Gdx.files.internal("mc/player_walk.png"));
-
         // split into frames sized width x height
-        TextureRegion[][] tmp = TextureRegion.split(walkTexture, (int)width, (int)height);
+        TextureRegion[][] tmp = TextureRegion.split(walkTexture, (int)FRAME_WIDTH, (int)FRAME_HEIGHT);
 
-        int rows = tmp.length;
-        int cols = tmp[0].length;
+        TextureRegion[] allFrames = tmp[0];
 
         Array<TextureRegion> downFrames = new Array<>();
         Array<TextureRegion> leftFrames = new Array<>();
@@ -74,23 +76,22 @@ public class Player {
         Array<TextureRegion> upFrames = new Array<>();
 
         // Fill arrays per-row if available.
-        // If fewer rows are present, leave arrays empty
-        if (rows >= 1) {
-            for (int c = 0; c < cols; c++) downFrames.add(tmp[0][c]);
+        for (int i = 0; i < 3; i++) {
+            leftFrames.add(allFrames[i]);
         }
-        if (rows >= 2) {
-            for (int c = 0; c < cols; c++) leftFrames.add(tmp[1][c]);
+        for (int i = 3; i < 6; i++) {
+            upFrames.add(allFrames[i]);
         }
-        if (rows >= 3) {
-            for (int c = 0; c < cols; c++) rightFrames.add(tmp[2][c]);
+        for (int i = 6; i < 9; i++) {
+            rightFrames.add(allFrames[i]);
         }
-        if (rows >= 4) {
-            for (int c = 0; c < cols; c++) upFrames.add(tmp[3][c]);
+        for (int i = 9; i < 12; i++) {
+            downFrames.add(allFrames[i]);
         }
 
-        float frameDuration = 0.1f; // seconds per frame
+        float frameDuration = 0.15f; // seconds per frame
 
-        // Create animations, with fallbacks if some rows are missing
+        // Create animations,
         if (downFrames.size > 0) walkDown = new Animation<>(frameDuration, downFrames, Animation.PlayMode.LOOP);
         if (rightFrames.size > 0) walkRight = new Animation<>(frameDuration, rightFrames, Animation.PlayMode.LOOP);
         if (leftFrames.size > 0) walkLeft = new Animation<>(frameDuration, leftFrames, Animation.PlayMode.LOOP);

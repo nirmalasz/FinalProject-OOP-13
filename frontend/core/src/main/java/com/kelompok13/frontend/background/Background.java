@@ -91,63 +91,15 @@ public class Background {
             float drawY = centerY + parallaxOffsetY;
 
             batch.draw(backgroundRegion, drawX, drawY, drawW, drawH);
-
-        } else if (mode == ResizeMode.TILE) {
-            //adjust this value to make tiles smaller/larger
-            float tileScale = 0.3f;
-            float scaledTexW = texW * tileScale;
-            float scaledTexH = texH * tileScale;
-
-            // bound
-            float viewLeft = camCenterX - vpW / 2f;
-            float viewRight = camCenterX + vpW / 2f;
-            float viewBottom = camCenterY - vpH / 2f;
-            float viewTop = camCenterY + vpH / 2f;
-
-            float offsetX = (camCenterX - vpW / 2f) * (1f - parallaxX);
-            float offsetY = (camCenterY - vpH / 2f) * (1f - parallaxY);
-            float minTileX, maxTileX, minTileY, maxTileY;
-            if (useWorldBounds) {
-                minTileX = worldMinX;
-                maxTileX = worldMaxX;
-                minTileY = worldMinY;
-                maxTileY = worldMaxY;
-            } else {
-                minTileX = viewLeft - offsetX;
-                maxTileX = viewRight - offsetX;
-                minTileY = viewBottom - offsetY;
-                maxTileY = viewTop - offsetY;
-            }
-            int startTileX = (int)Math.floor(minTileX / scaledTexW);
-            int endTileX = (int)Math.ceil(maxTileX / scaledTexW);
-            int startTileY = (int)Math.floor(minTileY / scaledTexH);
-            int endTileY = (int)Math.ceil(maxTileY / scaledTexH);
-
-            for (int x = startTileX; x <= endTileX; x++) {
-                for (int y = startTileY; y <= endTileY; y++) {
-                    float drawX = x * scaledTexW + offsetX;
-                    float drawY = y * scaledTexH + offsetY;
-
-
-                    if (drawX + scaledTexW < viewLeft || drawX > viewRight ||
-                        drawY + scaledTexH < viewBottom || drawY > viewTop) {
-                        continue;
-                    }
-                    if (useWorldBounds) {
-                        if (drawX + scaledTexW < worldMinX || drawX > worldMaxX ||
-                            drawY + scaledTexH < worldMinY || drawY > worldMaxY) {
-                            continue;
-                        }
-                    }
-
-                    batch.draw(backgroundRegion, drawX, drawY, scaledTexW, scaledTexH);
-                }
-            }
-
         } else { // STRETCH
-            float drawX = camCenterX - vpW / 2f + (1f - parallaxX) * (camCenterX);
-            float drawY = camCenterY - vpH / 2f + (1f - parallaxY) * (camCenterY);
-            batch.draw(backgroundRegion, drawX, drawY, vpW, vpH);
+//            float drawX = camCenterX - vpW / 2f + (1f - parallaxX) * (camCenterX);
+//            float drawY = camCenterY - vpH / 2f + (1f - parallaxY) * (camCenterY);
+            float drawX = worldMinX;
+            float drawY = worldMinY;
+            float drawW = worldMaxX - worldMinX;
+            float drawH = worldMaxY - worldMinY;
+            // batch.draw(backgroundRegion, drawX, drawY, vpW, vpH);
+            batch.draw(backgroundRegion, drawX, drawY, drawW, drawH);
         }
 
         batch.setColor(1f, 1f, 1f, 1f); // reset color

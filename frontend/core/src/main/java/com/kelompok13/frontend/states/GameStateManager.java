@@ -98,26 +98,31 @@ public class GameStateManager {
     }
 
     private void renderBackground(SpriteBatch batch){
-        float screenWidth = Gdx.graphics.getWidth();
-        float screenHeight = Gdx.graphics.getHeight();
-
-        OrthographicCamera camera;
         GameState currentState = getCurrentState();
 
-        // Use the state's camera if it's a PlayingState, otherwise use a centered screen camera
         if (currentState instanceof PlayingState) {
             PlayingState playingState = (PlayingState) currentState;
-            camera = playingState.getCamera(); // You need to add a getCamera() method to PlayingState
+            OrthographicCamera camera = playingState.getCamera();
+
+            float viewportWidth = camera.viewportWidth;
+            float viewportHeight = camera.viewportHeight;
+
+            batch.setProjectionMatrix(camera.combined);
+            backgroundManager.render(batch, camera, viewportWidth, viewportHeight);
+
         } else {
-            // For menu/static states, create a simple centered camera
-            camera = new OrthographicCamera();
+            // For non-PlayingState
+            float screenWidth = Gdx.graphics.getWidth();
+            float screenHeight = Gdx.graphics.getHeight();
+
+            OrthographicCamera camera = new OrthographicCamera();
             camera.setToOrtho(false, screenWidth, screenHeight);
             camera.position.set(screenWidth / 2f, screenHeight / 2f, 0);
             camera.update();
-        }
 
-        batch.setProjectionMatrix(camera.combined);
-        backgroundManager.render(batch, camera, screenWidth, screenHeight);
+            batch.setProjectionMatrix(camera.combined);
+            backgroundManager.render(batch, camera, screenWidth, screenHeight);
+        }
     }
 
     public void set(GameState state, BackgroundType bgType){

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -23,8 +25,9 @@ import com.kelompok13.frontend.states.GameStateManager;
 import com.kelompok13.frontend.states.gameplay.PlayingState;
 import com.kelompok13.frontend.utils.GameManager;
 import com.kelompok13.frontend.utils.GameManager;
-
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import java.awt.*;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 
 import static com.kelompok13.frontend.background.BackgroundType.MAIN;
 
@@ -49,8 +52,26 @@ public class OpeningState implements GameState {
 
     private void createBasicSkin(){
         skin = new Skin();
+
+
+        Texture buttonOriginal = new Texture(Gdx.files.internal("button/start.png"));
+        Texture buttonPressed = new Texture(Gdx.files.internal("button/start_clicked.png"));
+
+        Drawable buttonOriginalDrawable =
+            new TextureRegionDrawable(new TextureRegion(buttonOriginal));
+        Drawable buttonPressedDrawable =
+            new TextureRegionDrawable(new TextureRegion(buttonPressed));
+
         BitmapFont font = new BitmapFont();
         skin.add("default", font);
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = font;
+        textButtonStyle.up = buttonOriginalDrawable;
+        textButtonStyle.down = buttonPressedDrawable;
+        textButtonStyle.over = buttonPressedDrawable;
+
+        skin.add("default", textButtonStyle);
 
         Pixmap white = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         white.setColor(com.badlogic.gdx.graphics.Color.WHITE);
@@ -64,18 +85,20 @@ public class OpeningState implements GameState {
         skin.add("gray", new Texture(gray));
         gray.dispose();
 
+        //text field
         Pixmap dark_gray = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         dark_gray.setColor(com.badlogic.gdx.graphics.Color.DARK_GRAY);
         dark_gray.fill();
         skin.add("dark_gray", new Texture(dark_gray));
         dark_gray.dispose();
 
-        com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle labelStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
+        LabelStyle labelStyle = new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle();
         labelStyle.font = font;
         labelStyle.fontColor = com.badlogic.gdx.graphics.Color.WHITE;
         skin.add("default", labelStyle);
 
-        com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle textFieldStyle = new com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle();
+        TextFieldStyle textFieldStyle =
+            new com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle();
         textFieldStyle.font = font;
         textFieldStyle.fontColor = Color.WHITE;
         textFieldStyle.background = skin.newDrawable("dark_gray");
@@ -83,12 +106,7 @@ public class OpeningState implements GameState {
         textFieldStyle.selection = skin.newDrawable("gray");
         skin.add("default", textFieldStyle);
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = font;
-        textButtonStyle.up = skin.newDrawable("gray");
-        textButtonStyle.down = skin.newDrawable("white");
-        textButtonStyle.over = skin.newDrawable("dark_gray");
-        skin.add("default", textButtonStyle);
+
     }
 
     private void buildUI(){
@@ -96,18 +114,20 @@ public class OpeningState implements GameState {
         table.setFillParent(true);
         stage.addActor(table);
 
+
         table.setBackground((Drawable) null);
 
-        com.badlogic.gdx.scenes.scene2d.ui.Label
-            title = new com.badlogic.gdx.scenes.scene2d.ui.Label("WILD CARD", skin);
-        title.setScale(2f);
+        table.bottom().left();
+
         com.badlogic.gdx.scenes.scene2d.ui.Label
             prompt = new com.badlogic.gdx.scenes.scene2d.ui.Label("Enter Your Name:", skin);
         com.badlogic.gdx.scenes.scene2d.ui.TextField
             name = new com.badlogic.gdx.scenes.scene2d.ui.TextField("", skin);
         name.setMessageText("Username...");
         name.setAlignment(Align.center);
-        startButton = new TextButton("START GAME", skin);
+        startButton = new TextButton("", skin);
+        startButton.setSize(774f, 152f);
+        startButton.setPosition(30, 40);
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -119,13 +139,12 @@ public class OpeningState implements GameState {
                 gsm.set(new PlayingState(gsm), BackgroundType.MAIN);
             }
         });
-        table.add(title).padBottom(50f);
+
+        table.add(prompt).padLeft(150f).padBottom(10f);
         table.row();
-        table.add(prompt).padBottom(20f);
+        table.add(name).width(200f).height(40f).padLeft(150f).padBottom(20f);
         table.row();
-        table.add(name).width(200f).height(40f).padBottom(20f);
-        table.row();
-        table.add(startButton).width(200f).height(60f);
+        table.add(startButton).width(200f*1.5f).height(60f*1.5f).padBottom(60f).padLeft(150f);
     }
 
     @Override
@@ -153,5 +172,6 @@ public class OpeningState implements GameState {
     @Override
     public void dispose() {
         stage.dispose();
+        skin.dispose();
     }
 }
