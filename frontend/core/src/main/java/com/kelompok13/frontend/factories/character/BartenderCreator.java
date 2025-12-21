@@ -14,6 +14,6 @@ public class BartenderCreator implements CharacterFactory.CharacterCreator {
         String[] dialogues = {
            //
         };
-        return new Bartender("NamaBartender", new Vector2(10, 10),  dialogues, texture);
+        return new Bartender("NamaBartender", new Vector2(400, 400),  dialogues, texture);
     }
 }

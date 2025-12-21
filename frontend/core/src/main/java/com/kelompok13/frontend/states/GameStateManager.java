@@ -33,18 +33,7 @@ public class GameStateManager {
         startBackgroundTransition(bgType);
     }
     public void push(GameState state){
-        BackgroundType bgType;
-        if (state instanceof MenuState) {
-            bgType = BackgroundType.MENU;
-        } else if (state instanceof PlayingState) {
-            bgType = BackgroundType.MAIN;
-        } else if (state instanceof BattleState) {
-            bgType = BackgroundType.BATTLE;
-        } else if (state instanceof ShopState) {
-            bgType = BackgroundType.SHOP;
-        } else {
-            bgType = BackgroundType.MAIN; // Default
-        }
+        BackgroundType bgType =getBackgroundTypeForState(state);
         push(state, bgType);
     }
 
@@ -163,18 +152,23 @@ public class GameStateManager {
     }
 
     private void setBackgroundForState(GameState state) {
-        BackgroundType bgType;
-        if (state instanceof MenuState) {
-            bgType = BackgroundType.MENU;
-        } else if (state instanceof PlayingState) {
-            bgType = BackgroundType.MAIN;
-        } else if (state instanceof BattleState) {
-            bgType = BackgroundType.BATTLE;
-        } else if (state instanceof ShopState) {
-            bgType = BackgroundType.SHOP;
-        } else {
-            bgType = BackgroundType.MAIN;
-        }
+        BackgroundType bgType = getBackgroundTypeForState(state);
         startBackgroundTransition(bgType);
+    }
+
+    private BackgroundType getBackgroundTypeForState(GameState state) {
+        if (state instanceof OpeningState) {
+            return BackgroundType.START;  // FIX: Add OpeningState case
+        } else if (state instanceof MenuState) {
+            return BackgroundType.MENU;
+        } else if (state instanceof PlayingState) {
+            return BackgroundType.MAIN;
+        } else if (state instanceof BattleState) {
+            return BackgroundType.BATTLE;
+        } else if (state instanceof ShopState) {
+            return BackgroundType.SHOP;
+        } else {
+            return BackgroundType.START; // Default to START instead of MAIN
+        }
     }
 }

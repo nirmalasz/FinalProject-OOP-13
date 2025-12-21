@@ -27,7 +27,9 @@ public class BackgroundFactory {
                 return new Background(PATH_ENDING, ResizeMode.COVER, false, false);
             case MAIN:
                 Background mainBg = new Background(PATH_MAIN, ResizeMode.TILE, true, true);
-                mainBg.setParallax(0.5f, 0.5f); // Optional: parallax scrolling
+                mainBg.setParallax(0.5f, 0.5f);
+                //Set world bounds to match player boundaries (0, 0, 1280, 720)
+                mainBg.setWorldBounds(0, 0, 1280, 720);
                 return mainBg;
             default:
                 return new Background(PATH_START, ResizeMode.COVER, false, false);
