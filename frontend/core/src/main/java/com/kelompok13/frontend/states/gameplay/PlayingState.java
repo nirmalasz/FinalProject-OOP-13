@@ -58,16 +58,16 @@ public class PlayingState  implements GameState {
     }
 
     private void initializeBarScene(){
-        player = new Player(new Vector2(20,20));
+        player = new Player(new Vector2(640 - 64,360-64));
         createBarCharacters();
     }
 
     private void createBarCharacters(){
-        jackEnemy = (Enemy) characterFactory.createCharacter("jack", new Vector2(100,100));
-        queenEnemy = (Enemy) characterFactory.createCharacter("queen", new Vector2(200,100));
-        kingEnemy = (Enemy) characterFactory.createCharacter("king", new Vector2(300,100));
-        jokerEnemy = (Enemy) characterFactory.createCharacter("joker", new Vector2(400,100));
-        bartender = (Bartender) characterFactory.createCharacter("bartender", new Vector2(500,100));
+        jackEnemy = (Enemy) characterFactory.createCharacter("jack", new Vector2(150, 150));
+        queenEnemy = (Enemy) characterFactory.createCharacter("queen", new Vector2(650, 150));
+        kingEnemy = (Enemy) characterFactory.createCharacter("king", new Vector2(150, 350));
+        jokerEnemy = (Enemy) characterFactory.createCharacter("joker", new Vector2(650, 350));
+        bartender = (Bartender) characterFactory.createCharacter("bartender", new Vector2(400, 400));
 
         characters.add(jackEnemy);
         characters.add(queenEnemy);

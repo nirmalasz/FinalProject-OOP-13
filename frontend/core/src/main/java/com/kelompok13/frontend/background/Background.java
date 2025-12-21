@@ -19,7 +19,11 @@ public class Background {
     protected boolean tileY = false;
     protected float parallaxX = 1f; //moves with camera by default
     protected float parallaxY = 1f;
-
+    protected boolean useWorldBounds = false;
+    protected float worldMinX = 0;
+    protected float worldMinY = 0;
+    protected float worldMaxX = 1280;
+    protected float worldMaxY = 720;
     // constructor lgsg
     public Background(String path, ResizeMode mode, boolean tileX, boolean tileY) {
         this(new Texture(Gdx.files.internal(path)), mode, tileX, tileY, true);
@@ -35,9 +39,7 @@ public class Background {
         if (tileX || tileY) {
             backgroundTexture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
         }
-        // filter nanti lihat dl gambarnya pixel art apa ga
-        // kalau backgroundnya pixel pakai nearest
-        // kalau smooth pakai linear
+
         backgroundTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         this.backgroundRegion = new TextureRegion(backgroundTexture);
         this.width = backgroundTexture.getWidth();
@@ -47,6 +49,14 @@ public class Background {
     public void setParallax(float px, float py) {
         this.parallaxX = px;
         this.parallaxY = py;
+    }
+
+    public void setWorldBounds(float minX, float minY, float maxX, float maxY) {
+        this.useWorldBounds = true;
+        this.worldMinX = minX;
+        this.worldMinY = minY;
+        this.worldMaxX = maxX;
+        this.worldMaxY = maxY;
     }
 
     // alpha used for crossfade
@@ -88,23 +98,48 @@ public class Background {
             float scaledTexW = texW * tileScale;
             float scaledTexH = texH * tileScale;
 
+            // bound
             float viewLeft = camCenterX - vpW / 2f;
             float viewRight = camCenterX + vpW / 2f;
             float viewBottom = camCenterY - vpH / 2f;
             float viewTop = camCenterY + vpH / 2f;
 
-            float offsetX = camCenterX * (1f - parallaxX);
-            float offsetY = camCenterY * (1f - parallaxY);
-
-            int startTileX = (int)Math.floor((viewLeft - offsetX) / scaledTexW);
-            int endTileX = (int)Math.ceil((viewRight - offsetX) / scaledTexW);
-            int startTileY = (int)Math.floor((viewBottom - offsetY) / scaledTexH);
-            int endTileY = (int)Math.ceil((viewTop - offsetY) / scaledTexH);
+            float offsetX = (camCenterX - vpW / 2f) * (1f - parallaxX);
+            float offsetY = (camCenterY - vpH / 2f) * (1f - parallaxY);
+            float minTileX, maxTileX, minTileY, maxTileY;
+            if (useWorldBounds) {
+                minTileX = worldMinX;
+                maxTileX = worldMaxX;
+                minTileY = worldMinY;
+                maxTileY = worldMaxY;
+            } else {
+                minTileX = viewLeft - offsetX;
+                maxTileX = viewRight - offsetX;
+                minTileY = viewBottom - offsetY;
+                maxTileY = viewTop - offsetY;
+            }
+            int startTileX = (int)Math.floor(minTileX / scaledTexW);
+            int endTileX = (int)Math.ceil(maxTileX / scaledTexW);
+            int startTileY = (int)Math.floor(minTileY / scaledTexH);
+            int endTileY = (int)Math.ceil(maxTileY / scaledTexH);
 
             for (int x = startTileX; x <= endTileX; x++) {
                 for (int y = startTileY; y <= endTileY; y++) {
                     float drawX = x * scaledTexW + offsetX;
                     float drawY = y * scaledTexH + offsetY;
+
+
+                    if (drawX + scaledTexW < viewLeft || drawX > viewRight ||
+                        drawY + scaledTexH < viewBottom || drawY > viewTop) {
+                        continue;
+                    }
+                    if (useWorldBounds) {
+                        if (drawX + scaledTexW < worldMinX || drawX > worldMaxX ||
+                            drawY + scaledTexH < worldMinY || drawY > worldMaxY) {
+                            continue;
+                        }
+                    }
+
                     batch.draw(backgroundRegion, drawX, drawY, scaledTexW, scaledTexH);
                 }
             }

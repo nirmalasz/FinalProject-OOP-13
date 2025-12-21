@@ -15,7 +15,7 @@ public class JokerCreator implements CharacterFactory.CharacterCreator {
         String[] defeatDialogue = {
             //
         };
-        Enemy joker = new Enemy("Joker", new Vector2(450, 100), new JackStrategy(), 0,
+        Enemy joker = new Enemy("Joker", new Vector2(650, 350), new JackStrategy(), 0,
             challengeDialogue, defeatDialogue);
         joker.setTexture(new Texture("characters/joker.png"));
         return joker;

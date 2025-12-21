@@ -10,7 +10,7 @@ public class Enemy extends BaseCharacter {
     private EnemyStrategy battleStrategy;
     private int rewardMoney;
     public boolean isDefeated;
-    private int neededScoreToWin = 500;
+    private int neededScoreToWin = 200;
 
     private String[] challengeDialogues;
     private String[] defeatedDialogues;
