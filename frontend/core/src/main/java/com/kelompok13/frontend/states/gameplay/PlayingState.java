@@ -236,7 +236,7 @@ public class PlayingState  implements GameState {
         player.render(batch);
         batch.setProjectionMatrix(uiStage.getCamera().combined);
         uiStage.draw();
-        
+
         //batch.end();
     }
 
