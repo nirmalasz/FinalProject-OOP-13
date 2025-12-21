@@ -31,7 +31,7 @@ public class DialogueState implements GameState {
     }
 
     private void buildUI() {
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
         Table table = new Table();
         table.setFillParent(true);

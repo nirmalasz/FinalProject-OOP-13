@@ -68,5 +68,6 @@ public class InventoryState implements GameState {
     @Override
     public void dispose() {
         stage.dispose();
+        Gdx.input.setInputProcessor(null); 
     }
 }
