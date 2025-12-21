@@ -82,19 +82,15 @@ public class GameStateManager {
     public void render(SpriteBatch batch){
         batch.begin();
         renderBackground(batch);
-        batch.end();
-        
-        batch.begin();
         if (!states.isEmpty()) {
             GameState currentState = states.peek();
 
-            if (currentState instanceof OpeningState) {
+            if (currentState instanceof OpeningState || currentState instanceof InventoryState) {
                 // For Stage-based states, end batch before calling render
                 batch.end();
-                currentState.render(batch); // Stage will use its own batch
-                batch.begin(); // Begin again for next frame
+                currentState.render(batch);
+                batch.begin();
             } else {
-                // For normal states
                 currentState.render(batch);
             }
         }
