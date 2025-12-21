@@ -2,6 +2,7 @@ package com.kelompok13.frontend.utils;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,9 +14,14 @@ import com.kelompok13.frontend.states.menu.OpeningState;
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private GameStateManager gsm;
+    private Music backgroundMusic;
 
     @Override
     public void create() {
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("candypopsong.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.2f);
+        backgroundMusic.play();
         batch = new SpriteBatch();
         gsm = new GameStateManager();
 
@@ -38,5 +44,8 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         gsm.dispose();
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();
+        }
     }
 }
