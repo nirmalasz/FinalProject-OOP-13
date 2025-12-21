@@ -70,24 +70,4 @@ subprojects {
   }
 }
 
-jar {
-  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-  manifest {
-    attributes 'Main-Class': project.mainClassName
-  }
-
-  // Include all dependencies
-  from {
-    configurations.runtimeClasspath.collect {
-      it.isDirectory() ? it : zipTree(it)
-    }
-  }
-
-  // Include assets from parent directory
-  from(file("$rootDir/assets")) {
-    into 'assets'
-  }
-}
-
 eclipse.project.name = 'WildCard_Frontend' + '-parent'
