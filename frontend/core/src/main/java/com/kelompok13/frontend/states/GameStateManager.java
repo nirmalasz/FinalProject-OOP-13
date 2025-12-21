@@ -10,6 +10,7 @@ import com.kelompok13.frontend.background.BackgroundManager;
 import com.kelompok13.frontend.background.BackgroundType;
 import com.kelompok13.frontend.states.gameplay.BattleState;
 import com.kelompok13.frontend.states.gameplay.PlayingState;
+import com.kelompok13.frontend.states.interaction.InventoryState;
 import com.kelompok13.frontend.states.interaction.ShopState;
 import com.kelompok13.frontend.states.menu.MenuState;
 import com.kelompok13.frontend.states.menu.OpeningState;
@@ -44,11 +45,11 @@ public class GameStateManager {
 
     public void pop(){
         if (!states.isEmpty()){
-        states.pop().dispose();
-        if (!states.isEmpty()){
-            GameState previousState = states.peek();
-            setBackgroundForState(previousState);
-        }
+            states.pop().dispose();
+            if (!states.isEmpty()){
+                GameState previousState = states.peek();
+                setBackgroundForState(previousState);
+            }
         }
     }
 
@@ -81,6 +82,9 @@ public class GameStateManager {
     public void render(SpriteBatch batch){
         batch.begin();
         renderBackground(batch);
+        batch.end();
+        
+        batch.begin();
         if (!states.isEmpty()) {
             GameState currentState = states.peek();
 
@@ -158,17 +162,19 @@ public class GameStateManager {
 
     private BackgroundType getBackgroundTypeForState(GameState state) {
         if (state instanceof OpeningState) {
-            return BackgroundType.START;  // FIX: Add OpeningState case
+            return BackgroundType.START;
         } else if (state instanceof MenuState) {
             return BackgroundType.MENU;
         } else if (state instanceof PlayingState) {
+            return BackgroundType.MAIN;
+        } else if (state instanceof InventoryState) {
             return BackgroundType.MAIN;
         } else if (state instanceof BattleState) {
             return BackgroundType.BATTLE;
         } else if (state instanceof ShopState) {
             return BackgroundType.SHOP;
         } else {
-            return BackgroundType.START; // Default to START instead of MAIN
+            return BackgroundType.START;
         }
     }
 }

@@ -13,6 +13,7 @@ import com.kelompok13.frontend.characters.Bartender;
 import com.kelompok13.frontend.characters.BaseCharacter;
 import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.factories.CharacterFactory;
+import com.kelompok13.frontend.models.Inventory;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
 import com.kelompok13.frontend.states.interaction.InventoryState;
@@ -45,6 +46,7 @@ public class PlayingState  implements GameState {
     private float interactionCooldown = 0.5f;
     private float currentCooldown = 0f;
 
+    private Inventory inventory;
 
     public PlayingState(GameStateManager gsm){
         this.gsm = gsm;
@@ -54,7 +56,12 @@ public class PlayingState  implements GameState {
         this.camera.setToOrtho(false, 800, 480);
         this.characters = new ArrayList<>();
         this.characterFactory = new CharacterFactory();
+        this.inventory = new Inventory(5, 3);
         initializeBarScene();
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 
     private void initializeBarScene(){

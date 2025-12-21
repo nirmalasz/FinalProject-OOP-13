@@ -6,8 +6,8 @@ import com.kelompok13.frontend.card.effects.CardEffect;
 public class JokerCard extends BaseCard{
     private CardEffect effect;
 
-    public JokerCard(CardEffect effect){
-        super("Joker", CardType.JOKER);
+    public JokerCard(CardEffect effect, String name){
+        super(name, CardType.JOKER);
         this.effect = effect;
     }
 

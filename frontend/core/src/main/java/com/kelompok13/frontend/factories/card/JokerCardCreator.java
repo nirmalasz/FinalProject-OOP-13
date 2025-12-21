@@ -13,7 +13,7 @@ public class JokerCardCreator implements CardFactory.CardCreator {
     @Override
     public BaseCard createCard() {
         JokerEffect effect= new JokerEffect(3, MULTIPLY_SCORE);
-        JokerCard jokerCard = new JokerCard(effect);
+        JokerCard jokerCard = new JokerCard(effect, "Multiply Joker");
         Texture texture = new Texture("cards/joker_card.png");
         jokerCard.setTexture(texture, false);
         return jokerCard;
