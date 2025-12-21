@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.kelompok13.frontend.characters.Enemy;
 import com.kelompok13.frontend.characters.BaseCharacter;
 import com.kelompok13.frontend.factories.CharacterFactory;
-import com.kelompok13.frontend.strategies.JackStrategy;
 import com.kelompok13.frontend.strategies.QueenStrategy;
 
 public class QueenCreator implements CharacterFactory.CharacterCreator {
@@ -18,7 +17,8 @@ public class QueenCreator implements CharacterFactory.CharacterCreator {
         };
         Enemy queen = new Enemy("Queen", new Vector2(3300, 600), new QueenStrategy(), 200,
             challengeDialogue, defeatDialogue);
-        queen.setTexture(new Texture("characters/queen.png"));
+        queen.setMapTexture(new Texture("characters/queen.png"));
+        queen.setPortraitTexture(new Texture("characters/queen_scene.png"));
         queen.setWidthHeight(900, 1500);
         return queen;
     }

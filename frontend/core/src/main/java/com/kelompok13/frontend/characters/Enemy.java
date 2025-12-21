@@ -6,7 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.kelompok13.frontend.strategies.EnemyStrategy;
 
 public class Enemy extends BaseCharacter {
-    private Texture texture;
+    private Texture mapTexture;
+    private Texture portraitTexture;
+
     private EnemyStrategy battleStrategy;
     private int rewardMoney;
     public boolean isDefeated;
@@ -62,8 +64,8 @@ public class Enemy extends BaseCharacter {
 
     @Override
     public void render(SpriteBatch batch) {
-        if (texture != null) {
-            batch.draw(texture,
+        if (mapTexture != null) {
+            batch.draw(mapTexture,
                 position.x,
                 position.y,
                 bound.width,
@@ -83,11 +85,19 @@ public class Enemy extends BaseCharacter {
         return rewardMoney;
     }
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
+    public void setMapTexture(Texture mapTexture) {
+        this.mapTexture = mapTexture;
     }
 
     public int getNeededScoreToWin() {
         return neededScoreToWin;
+    }
+
+    public void setPortraitTexture(Texture portraitTexture) {
+        this.portraitTexture = portraitTexture;
+    }
+
+    public Texture getPortraitTexture() {
+        return portraitTexture;
     }
 }

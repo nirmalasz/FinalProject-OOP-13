@@ -2,13 +2,23 @@ package com.kelompok13.frontend.states.gameplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kelompok13.frontend.characters.Bartender;
 import com.kelompok13.frontend.characters.BaseCharacter;
 import com.kelompok13.frontend.characters.Enemy;
@@ -35,6 +45,11 @@ public class PlayingState  implements GameState {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
 
+    private Texture closeButtonTexture;
+    private Texture closeButtonPressedTexture;
+    private ImageButton closeButton;
+    private Stage uiStage;
+
     private CharacterFactory characterFactory;
     private Enemy jackEnemy;
     private Enemy queenEnemy;
@@ -47,6 +62,11 @@ public class PlayingState  implements GameState {
     private float currentCooldown = 0f;
 
     private Inventory inventory;
+    private InputMultiplexer inputMultiplexer;
+
+    private boolean allEnemiesDefeated = false;
+    private float victoryDelayTimer = 0f;
+    private static final float VICTORY_DELAY = 3.0f;
 
     public PlayingState(GameStateManager gsm){
         this.gsm = gsm;
@@ -56,10 +76,58 @@ public class PlayingState  implements GameState {
         this.camera = new OrthographicCamera();
         this.camera.setToOrtho(false, 5120/1.2f, 5120/1.2f);
 
+        this.uiStage = new Stage(new ScreenViewport());
+
         this.characters = new ArrayList<>();
         this.characterFactory = new CharacterFactory();
         this.inventory = new Inventory(5, 3);
         initializeBarScene();
+        buildUI();
+        setupInput();
+    }
+
+    @Override
+    public void resume(){
+        setupInput();
+        System.out.println("Resumed PlayingState");
+    }
+
+    private void buildUI(){
+        closeButtonTexture = new Texture(Gdx.files.internal("button/closegame_button.png"));
+        closeButtonPressedTexture = new Texture(Gdx.files.internal("button" +
+            "/closegame_button_pressed.png"));
+
+        //close button
+        TextureRegionDrawable closeUpDrawable =
+            new TextureRegionDrawable(new TextureRegion(closeButtonTexture));
+        TextureRegionDrawable closeDownDrawable =
+            new TextureRegionDrawable(new TextureRegion(closeButtonPressedTexture));
+        closeButton = new ImageButton(closeUpDrawable, closeDownDrawable);
+
+        int screenWidth = Gdx.graphics.getWidth();
+        int screenHeight = Gdx.graphics.getHeight();
+
+        closeButton.setSize(100, 100);
+        closeButton.setPosition(screenWidth-120, screenHeight-120);
+
+        closeButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+                System.out.println("Close button clicked!");
+            }
+        });
+        uiStage.addActor(closeButton);
+    }
+
+    private void setupInput() {
+        inputMultiplexer = new InputMultiplexer();
+
+        // UI stage processes input first (for button clicks)
+        inputMultiplexer.addProcessor(uiStage);
+
+        // Set the multiplexer as the input processor
+        Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
     public Inventory getInventory() {
@@ -98,7 +166,9 @@ public class PlayingState  implements GameState {
         characters.remove(enemy);
         if (areAllEnemiesDefeated()){
             System.out.println("All enemies defeated! You win!");
-            //gsm.push(new EndingState(gsm));
+            allEnemiesDefeated = true;
+            victoryDelayTimer = 0f;
+            // gsm.push(new EndingState(gsm));
         }
     }
     private boolean areAllEnemiesDefeated() {
@@ -114,6 +184,16 @@ public class PlayingState  implements GameState {
         if(currentCooldown > 0){
             currentCooldown -= delta;
         }
+        if (allEnemiesDefeated) {
+            victoryDelayTimer += delta;
+
+            if (victoryDelayTimer >= VICTORY_DELAY) {
+                gsm.push(new EndingState(gsm));
+                allEnemiesDefeated = false;
+            }
+            return;
+        }
+
 
         handlePlayerInput(delta);
         updateCamera(delta);
@@ -136,6 +216,8 @@ public class PlayingState  implements GameState {
             gsm.push(inventoryState);
         }
 
+        uiStage.act(delta);
+
     }
 
     @Override
@@ -152,7 +234,9 @@ public class PlayingState  implements GameState {
 
         // Render player
         player.render(batch);
-
+        batch.setProjectionMatrix(uiStage.getCamera().combined);
+        uiStage.draw();
+        
         //batch.end();
     }
 
@@ -161,6 +245,9 @@ public class PlayingState  implements GameState {
         shapeRenderer.dispose();
         batch.dispose();
         player.dispose();
+        uiStage.dispose();
+        closeButtonTexture.dispose();
+        closeButtonPressedTexture.dispose();
 
         for (BaseCharacter character : characters) {
             character.dispose();

@@ -6,4 +6,5 @@ public interface GameState {
     void update(float delta);
     void render(SpriteBatch batch);
     void dispose();
+    default void resume() {};
 }

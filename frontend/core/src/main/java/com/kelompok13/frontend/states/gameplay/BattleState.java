@@ -165,17 +165,17 @@ public class BattleState implements GameState {
 
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
-        int buttonWidth = 150;
-        int buttonHeight = 70;
+        int buttonWidth = 200;
+        int buttonHeight = 80;
         int spacing = 30;
 
         playButton.setSize(buttonWidth, buttonHeight);
         playButton.setPosition(
-            screenWidth / 2 - buttonWidth - spacing / 2, 50);
+            screenWidth / 2 - buttonWidth - spacing / 2, 25);
 
         discardButton.setSize(buttonWidth, buttonHeight);
         discardButton.setPosition(
-            screenWidth / 2 + spacing / 2, 50);
+            screenWidth / 2 + spacing / 2, 25);
 
         closeButton.setSize(100, 100);
         closeButton.setPosition(screenWidth-120, 5);
@@ -306,13 +306,15 @@ public class BattleState implements GameState {
         float centerX = Gdx.graphics.getWidth() / 2;
         float centerY = Gdx.graphics.getHeight() / 2;
 
+        renderEnemyPortrait(batch);
+
         if(!battleEnded){
             // Draw battle info
             batch.begin();
             //target Score
             font.draw(batch, "" + playerScore, centerX - 100, centerY + 99);
             scoreFont.draw(batch, "" + targetScore, centerX + 50, centerY + 99);
-            playFont.draw(batch, "" + playRemaining, playButton.getX() + 40,
+            playFont.draw(batch, "" + playRemaining, playButton.getX() + 90,
                 Gdx.graphics.getHeight()-60);
             discardFont.draw(batch, "" + discardRemaining, discardButton.getX() + 80,
                 Gdx.graphics.getHeight()-60);
@@ -355,6 +357,19 @@ public class BattleState implements GameState {
         playButtonPressedTexture.dispose();
         discardButtonTexture.dispose();
         discardButtonPressedTexture.dispose();
+    }
+
+    private void renderEnemyPortrait(SpriteBatch batch){
+        Texture enemyTexture = enemy.getPortraitTexture();
+        if (enemyTexture != null){
+            float portraitWidth = 200f;
+            float portraitHeight = 200f;
+            float portraitX = 100;
+            float portraitY = Gdx.graphics.getHeight() - 300;
+            batch.begin();
+            batch.draw(enemyTexture, portraitX, portraitY, portraitWidth, portraitHeight);
+            batch.end();
+        }
     }
 
     private void updateButtonStates(){

@@ -12,6 +12,7 @@ import com.kelompok13.frontend.states.gameplay.BattleState;
 import com.kelompok13.frontend.states.gameplay.PlayingState;
 import com.kelompok13.frontend.states.interaction.InventoryState;
 import com.kelompok13.frontend.states.interaction.ShopState;
+import com.kelompok13.frontend.states.menu.EndingState;
 import com.kelompok13.frontend.states.menu.MenuState;
 import com.kelompok13.frontend.states.menu.OpeningState;
 
@@ -48,6 +49,7 @@ public class GameStateManager {
             states.pop().dispose();
             if (!states.isEmpty()){
                 GameState previousState = states.peek();
+                previousState.resume();
                 setBackgroundForState(previousState);
             }
         }
@@ -85,7 +87,10 @@ public class GameStateManager {
         if (!states.isEmpty()) {
             GameState currentState = states.peek();
 
-            if (currentState instanceof OpeningState || currentState instanceof InventoryState || currentState instanceof BattleState) {
+            if (currentState instanceof OpeningState
+                || currentState instanceof InventoryState
+                || currentState instanceof BattleState
+                || currentState instanceof EndingState) {
                 // For Stage-based states, end batch before calling render
                 batch.end();
                 currentState.render(batch);
@@ -174,7 +179,10 @@ public class GameStateManager {
             return BackgroundType.BATTLE;
         } else if (state instanceof ShopState) {
             return BackgroundType.SHOP;
-        } else {
+        } else if (state instanceof  EndingState) {
+            return BackgroundType.ENDING;
+        }
+        else {
             return BackgroundType.START;
         }
     }
