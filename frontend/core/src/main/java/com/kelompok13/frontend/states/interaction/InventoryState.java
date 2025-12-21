@@ -7,14 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kelompok13.frontend.states.GameState;
 import com.kelompok13.frontend.states.GameStateManager;
+import com.kelompok13.frontend.states.gameplay.PlayingState;
 
 public class InventoryState implements GameState {
 
     private GameStateManager gsm;
     private Stage stage;
+    private PlayingState playingState;
 
-    public InventoryState(GameStateManager gsm) {
+    public InventoryState(GameStateManager gsm, PlayingState state) {
         this.gsm = gsm;
+        this.playingState = state;
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
