@@ -13,21 +13,7 @@ import java.util.*;
 //3. two pair
 //4. full house
 public class HandEvaluator {
-       private static final Map<String, Integer> HAND_RANKINGS = Map.ofEntries(
-        Map.entry("High Card", 1),
-        Map.entry("Pair", 2),
-        Map.entry("Two Pair", 3),
-        Map.entry("Three of a Kind", 4),
-        Map.entry("Straight", 5),
-        Map.entry("Flush", 6),
-        Map.entry("Full House", 7),
-        Map.entry("Four of a Kind", 8),
-        Map.entry("Straight Flush", 9),
-        Map.entry("Royal Flush", 10)
-    );
-
-    //untuk sementara beberapa aja
-    Map<String, Integer> handRankings = new HashMap<>(){{
+    private final Map<String, Integer> handRankings = new HashMap<>(){{
         put("High Card", 1);
         put("Pair", 2);
         put("Two Pair", 3);
@@ -60,9 +46,21 @@ public class HandEvaluator {
             currentHandType = "No Cards";
         }
 
+        if(checkRoyalFlush(selectedCard, handsize)){
+            currentHandType = "Royal Flush";
+            return countResult(handRankings.get("Royal Flush"));
+        }
         if (checkFlush(selectedCard, handsize) && checkStraight(selectedCard)){
             currentHandType = "Straight Flush";
             return countResult(handRankings.get("Straight Flush"));
+        }
+        if (checkFourOfAKind(selectedCard, handsize)){
+            currentHandType = "Four of a Kind";
+            return countResult(handRankings.get("Four of a Kind"));
+        }
+        if (checkThreeOfAKind(selectedCard) && checkPair(selectedCard)){
+            currentHandType = "Full House";
+            return countResult(handRankings.get("Full House"));
         }
         if (checkFlush(selectedCard, handsize)){
             currentHandType = "Flush";
@@ -71,6 +69,10 @@ public class HandEvaluator {
         if (checkStraight(selectedCard)){
             currentHandType = "Straight";
             return countResult(handRankings.get("Straight"));
+        }
+        if (checkThreeOfAKind(selectedCard)){
+            currentHandType = "Three of a Kind";
+            return countResult(handRankings.get("Three of a Kind"));
         }
         if (checkPair(selectedCard)){
             if (currentHandType.equals("Two Pair")){
@@ -88,6 +90,45 @@ public class HandEvaluator {
 
     public String getCurrentHandType() {
         return currentHandType;
+    }
+
+    private boolean checkRoyalFlush(List<PlayingCard> selectedCard, int handsize) {
+        // Check for flush first
+        if (!checkFlush(selectedCard, handsize)) {
+            return false;
+        }
+
+        // Check for royal values
+        Set<Integer> royalValues = new HashSet<>(Arrays.asList(10, 11, 12, 13, 14));
+        Set<Integer> flushValues = new HashSet<>(scoringCards);
+
+        if (flushValues.containsAll(royalValues)) {
+            currentHandType = "Royal Flush";
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean checkFourOfAKind(List<PlayingCard> selectedCard, int handsize) {
+        Map<Integer, Integer> valueCount = new HashMap<>();
+        for (PlayingCard card : selectedCard) {
+            int value = card.getValue();
+            valueCount.put(value, valueCount.getOrDefault(value, 0) + 1);
+        }
+
+        scoringCards.clear();
+        for (Map.Entry<Integer, Integer> entry : valueCount.entrySet()) {
+            if (entry.getValue() == 4) {
+                scoringCards.add(entry.getKey());
+                scoringCards.add(entry.getKey());
+                scoringCards.add(entry.getKey());
+                scoringCards.add(entry.getKey());
+                currentHandType = "Four of a Kind";
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkFlush(List<PlayingCard> selectedCard, int handsize) {
@@ -151,6 +192,29 @@ public class HandEvaluator {
         return true;
     }
 
+    private boolean checkThreeOfAKind(List<PlayingCard> selectedCard){
+        Map<Integer, Integer> valueCount = new HashMap<>();
+        for (PlayingCard card: selectedCard){
+            int value = card.getValue();
+            valueCount.put(value, valueCount.getOrDefault(value, 0) + 1);
+        }
+
+        boolean threeFound = false;
+
+        scoringCards.clear();
+        for (Map.Entry<Integer, Integer> entry : valueCount.entrySet()) {
+            if (entry.getValue() == 3) {
+                threeFound = true;
+                scoringCards.add(entry.getKey());
+                scoringCards.add(entry.getKey());
+                scoringCards.add(entry.getKey());
+                currentHandType = "Three of a Kind";
+                return  threeFound;
+            }
+        }
+        return threeFound;
+    }
+
     private boolean checkPair(List<PlayingCard> selectedCard){
         int pairs = pairCount(selectedCard);
 
@@ -189,20 +253,6 @@ public class HandEvaluator {
         return pairs;
     }
 
-//    //three of a kind
-//    private int checkThreeOfAKind(List<PlayingCard> selectedCard){
-//        List<Integer> valuesCounted = new ArrayList<>();
-//        for (PlayingCard card: selectedCard){
-//            valuesCounted.add(card.getValue());
-//        }
-//        for (int i: valuesCounted){
-//            int freq = Collections.frequency(valuesCounted, i);
-//            if (freq == 3){
-//                countedValues.add(i);
-//                return handRankings.get("Three of a Kind");
-//            }
-//        }
-//        return 0;
-//    }
+
 
 }

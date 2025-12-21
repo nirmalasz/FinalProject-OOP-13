@@ -52,7 +52,12 @@ public class BattleState implements GameState {
     private ImageButton discardButton;
     private ImageButton closeButton;
 
+    private BitmapFont titleFont;
     private BitmapFont font;
+    private BitmapFont scoreFont;
+    private BitmapFont discardFont;
+    private BitmapFont playFont;
+
     private ShapeRenderer shapeRenderer;
     private Stage stage;
 
@@ -63,7 +68,13 @@ public class BattleState implements GameState {
     private List<PlayingCard> playedCards;
     private List<Rectangle> cardColliders;
     private List<Boolean> selectedCards;
-    private Texture cardFrontTexture;
+
+    // limit for play and discard: for now will be fixed bcs we haven't implement special item
+    private static final int MAX_PLAY_CARDS = 5;
+    private static final int MAX_DISCARD_CARDS = 5;
+
+    private int playRemaining;
+    private int discardRemaining;
 
     private HandEvaluator handEvaluator;
     private CombatResolver combatResolver;
@@ -94,14 +105,24 @@ public class BattleState implements GameState {
         cardColliders = new ArrayList<>();
         selectedCards = new ArrayList<>();
 
-        this.font = new BitmapFont();
-        this.font.getData().setScale(1.5f);
-        this.shapeRenderer = new ShapeRenderer();
+        this.playRemaining = MAX_PLAY_CARDS;
+        this.discardRemaining = MAX_DISCARD_CARDS;
 
         this.playerScore = 0;
 
         // Initialize UI
+        this.titleFont = new BitmapFont();
+        this.titleFont.getData().setScale(3f);
         this.font = new BitmapFont();
+        this.font.getData().setScale(3f);
+        this.discardFont = new BitmapFont();
+        this.playFont = new BitmapFont();
+        this.scoreFont = new BitmapFont();
+        discardFont.getData().setScale(3f);
+        playFont.getData().setScale(3f);
+        scoreFont.getData().setScale(3f);
+
+        this.shapeRenderer = new ShapeRenderer();
         this.shapeRenderer = new ShapeRenderer();
         this.stage = new Stage();
 
@@ -189,6 +210,8 @@ public class BattleState implements GameState {
         stage.addActor(playButton);
         stage.addActor(discardButton);
         stage.addActor(closeButton);
+
+        updateButtonStates();
     }
 
     private void startBattle(){
@@ -217,7 +240,7 @@ public class BattleState implements GameState {
 
         int totalWidth = currentHand.size() * (cardWidth + spacing) - spacing;
         int startX = (screenWidth - totalWidth) / 2;
-        int yPosition = 150;
+        int yPosition = 155;
         for(int i =0; i <currentHand.size(); i++){
             Rectangle bounds = new Rectangle(
                 startX + i * (cardWidth + spacing),
@@ -262,6 +285,16 @@ public class BattleState implements GameState {
             }
             return;
         }
+
+        if (playRemaining <= 0 && discardRemaining <= 0) {
+            // No more actions left, end battle
+            if (playerScore >= targetScore) {
+                endBattle(true);
+            } else {
+                endBattle(false);
+            }
+            return;
+        }
         handleInput();
         stage.act(delta);
     }
@@ -276,9 +309,13 @@ public class BattleState implements GameState {
         if(!battleEnded){
             // Draw battle info
             batch.begin();
-            font.draw(batch, "BATTLE: " + enemy.getName(), centerX - 50, centerY + 100);
-            font.draw(batch, "Score: " + playerScore + " / " + targetScore,
-                centerX - 50, centerY + 70);
+            //target Score
+            font.draw(batch, "" + playerScore, centerX - 100, centerY + 99);
+            scoreFont.draw(batch, "" + targetScore, centerX + 50, centerY + 99);
+            playFont.draw(batch, "" + playRemaining, playButton.getX() + 40,
+                Gdx.graphics.getHeight()-60);
+            discardFont.draw(batch, "" + discardRemaining, discardButton.getX() + 80,
+                Gdx.graphics.getHeight()-60);
             batch.end();
 
             // Draw cards and buttons
@@ -292,15 +329,15 @@ public class BattleState implements GameState {
             // Draw result
             batch.begin();
             if (playerWon) {
-                font.draw(batch, "VICTORY!", centerX - 40, centerY + 50);
+                font.draw(batch, "VICTORY!", centerX-50, centerY);
                 font.draw(batch, "Reward: $" + enemy.getRewardMoney(),
-                    centerX - 50, centerY);
+                    centerX-100, centerY-50);
             } else {
-                font.draw(batch, "DEFEAT!", centerX - 30, centerY + 50);
+                font.draw(batch, "DEFEAT!", centerX-50, centerY);
             }
             font.draw(batch, "Returning in " +
                     String.format("%.1f", 3.0f - resultDisplayTime) + "s...",
-                centerX - 70, centerY - 50);
+                centerX -150, centerY-100);
             batch.end();
         }
     }
@@ -308,12 +345,21 @@ public class BattleState implements GameState {
     @Override
     public void dispose() {
         font.dispose();
+        titleFont.dispose();
+        scoreFont.dispose();
+        playFont.dispose();
+        discardFont.dispose();
         shapeRenderer.dispose();
         stage.dispose();
         playButtonTexture.dispose();
         playButtonPressedTexture.dispose();
         discardButtonTexture.dispose();
         discardButtonPressedTexture.dispose();
+    }
+
+    private void updateButtonStates(){
+        playButton.setDisabled(playRemaining <= 0);
+        discardButton.setDisabled(discardRemaining <= 0);
     }
 
     private void handleInput(){
@@ -336,6 +382,11 @@ public class BattleState implements GameState {
         }
     }
     private void playSelectedCards(){
+        if (playRemaining <= 0){
+            System.out.println("No remaining plays this turn.");
+            return;
+        }
+
         List<PlayingCard> toPlay = new ArrayList<>();
         for(int i = selectedCards.size() - 1; i >= 0; i--){
             if(selectedCards.get(i)){
@@ -357,6 +408,9 @@ public class BattleState implements GameState {
                 selectedCards.add(false);
             }
 
+            playRemaining--;
+            updateButtonStates();
+
             System.out.println("Played hand score: " + score + " | Total: " + playerScore + "| " +
                 "Hand Played: " + handScored);
 
@@ -373,6 +427,11 @@ public class BattleState implements GameState {
     }
 
     private void discardSelectedCards(){
+        if (discardRemaining <= 0){
+            System.out.println("No remaining discards this turn.");
+            return;
+        }
+
         List<PlayingCard> toDiscard = new ArrayList<>();
         for(int i = selectedCards.size() - 1; i >= 0; i--){
             if(selectedCards.get(i)){
@@ -389,6 +448,9 @@ public class BattleState implements GameState {
             for (int i = 0; i < currentHand.size(); i++) {
                 selectedCards.add(false);
             }
+
+            discardRemaining--;
+            updateButtonStates();
 
             updateCardPositions();
             System.out.println("Discarded " + toDiscard.size() + " cards");
@@ -435,13 +497,6 @@ public class BattleState implements GameState {
                 shapeRenderer.end();
                 batch.begin();
             }
-
-            // Draw card border
-//            shapeRenderer.setColor(Color.BLACK);
-//            shapeRenderer.rect(cardRect.x, cardRect.y, cardRect.width, 2);
-//            shapeRenderer.rect(cardRect.x, cardRect.y + cardRect.height - 2, cardRect.width, 2);
-//            shapeRenderer.rect(cardRect.x, cardRect.y, 2, cardRect.height);
-//            shapeRenderer.rect(cardRect.x + cardRect.width - 2, cardRect.y, 2, cardRect.height);
             if (selected) {
                 batch.end();
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -474,27 +529,5 @@ public class BattleState implements GameState {
             }
         }
     }
-
-//    private void renderButtons(SpriteBatch batch){
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//
-//        // Draw Play Button
-//        shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 1f); // Green for Play
-//        shapeRenderer.rect(playButton.x, playButton.y, playButton.width, playButton.height);
-//
-//        // Draw Discard Button
-//        shapeRenderer.setColor(0.8f, 0.2f, 0.2f, 1f); // Red for Discard
-//        shapeRenderer.rect(discardButton.x, discardButton.y, discardButton.width, discardButton.height);
-//
-//        shapeRenderer.end();
-//    }
-//
-//    private void renderButtonText(SpriteBatch batch){
-//        font.setColor(Color.BLACK);
-//        font.draw(batch, "PLAY",
-//            playButton.x + 10, playButton.y + 25);
-//        font.draw(batch, "DISCARD",
-//            discardButton.x + 5, discardButton.y + 25);
-//    }
 
 }
